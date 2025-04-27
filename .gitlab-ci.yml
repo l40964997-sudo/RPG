@@ -1,0 +1,44 @@
+variables:
+  MAVEN_OPTS: -Dmaven.repo.local=.m2/repository
+  MAVEN_CLI_OPTS: "-B -DskipTests"
+
+stages:
+  - deadline
+  - checkstyle
+
+cache:
+  paths:
+    - .m2/repository
+    - target
+
+checkstyle:
+  stage: checkstyle
+  image: maven:3.9.9-eclipse-temurin-17
+  script:
+    - mvn $MAVEN_CLI_OPTS clean compile
+
+deadline:
+  stage: deadline
+  image: ubuntu:22.04
+  before_script:
+    - apt-get update
+    - apt-get install -y curl
+  script:
+    - "group=$CI_PROJECT_TITLE"
+    - "group=${group:6:2}"
+    - "echo Group: $group"
+    - "current_date=$(date +%s)"
+    - "assignment_id=2"
+    - plain_date=$(curl -s "https://2026.oop.virtuallab.dev/api/oop/deadlines/$assignment_id?token=$DEADLINE_TOKEN&group=$group")
+    - echo "The deadline is for the introduction assignment with id 2 for group $group is $plain_date"
+    - soft_due_date=$(date -d "$plain_date" +%s)
+    - hard_due_date=$(date -d "$plain_date + 1 day" +%s)
+    - if [ $current_date -gt $soft_due_date ] && [ $current_date -lt $hard_due_date ]; then
+    -     echo "The deadline has passed, but you can still submit, but it will be marked as late."
+    -     exit 1
+    - fi
+    - if [ $current_date -gt $hard_due_date ]; then
+    -     echo "The deadline has passed. You can no longer submit your assignment."
+    -     echo "Please contact your TA for further assistance."
+    -     exit 1
+    - fi
