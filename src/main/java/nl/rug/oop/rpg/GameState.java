@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.io.Serializable;
-
 /**
  * The save snapshot. Holds everything that needs to survive across a
  * save/load cycle: the player (which transitively owns the world via
@@ -14,10 +13,12 @@ import java.io.Serializable;
  */
 @Getter
 @AllArgsConstructor
-public class GameState implements Serializable {
+public class GameState {
 
     private static final long serialVersionUID = 1L;
 
     private final Player player;
     private final Difficulty difficulty;
+
+
 }

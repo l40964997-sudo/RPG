@@ -23,7 +23,7 @@ public abstract class Item implements Inspectable {
     }
 
     /**
-     * Apply this item's effect.
+     * @param player the player using the item; never {@code null}.
      */
     public abstract void use(Player player);
 

@@ -17,6 +17,7 @@ public class NormalDoor extends Door {
 
     @Override
     public void interact(Player player) {
+        System.out.println("You take that route.");
         passThrough(player);
     }
 }

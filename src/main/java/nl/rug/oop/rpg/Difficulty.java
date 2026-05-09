@@ -19,6 +19,14 @@ public enum Difficulty {
     private final double villainMultiplier;
     private final double playerMultiplier;
 
+
+    /**
+     * Operation.
+     *
+     * @param label             human-readable name shown in menus.
+     * @param villainMultiplier scales villain HP and damage at construction.
+     * @param playerMultiplier  scales the player's outgoing damage in combat.
+     */
     Difficulty(String label, double villainMultiplier, double playerMultiplier) {
         this.label = label;
         this.villainMultiplier = villainMultiplier;

@@ -7,10 +7,22 @@ public class GreenGoblin extends Villain {
     private static final long serialVersionUID = 1L;
     private int turnCount = 0;
 
-    public GreenGoblin(String name, String description, int baseHealth, int baseDamage, Difficulty difficulty, Item drop) {
-        super(name, description, baseHealth, baseDamage, difficulty, drop);
+    /**
+     * Construct the Green Goblin with difficulty-scaled stats.
+     *
+     * @param difficulty current game difficulty.
+     * @param drop       optional item awarded on defeat.
+     */
+    public GreenGoblin(Difficulty difficulty, Item drop) {
+        super("Green Goblin","Norman Osborn cackles from atop his glider, a pumpkin bomb in each hand",46,7,difficulty,drop);
     }
 
+    /**
+     * Most turns: ordinary attack. Every third turn: bomb for
+     * +6 extra damage.
+     *
+     * @param player the player taking the hit.
+     */
     @Override
     public void performAttack(Player player) {
         turnCount++;

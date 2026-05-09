@@ -11,7 +11,16 @@ public class Trainer extends NPC{
     private final int venomBonus;
     private boolean trained;
 
-
+    /**
+     * Construct a new Trainer.
+     *
+     * @param description text shown when the trainer is inspected.
+     * @param dialogue    line spoken when training begins.
+     * @param healBonus   HP restored after training (capped at max HP).
+     * @param damageBonus permanent damage increase.
+     * @param webBonus    web charges added after training.
+     * @param venomBonus  venom charges added after training.
+     */
     public Trainer(String description, String dialogue, int healBonus, int damageBonus,int webBonus,int venomBonus){
         super(description);
         this.dialogue=dialogue;
@@ -21,6 +30,13 @@ public class Trainer extends NPC{
         this.venomBonus=venomBonus;
     }
 
+    /**
+     * If this trainer has not yet trained the player, apply all
+     * stat bonuses and mark this trainer as used. Otherwise print
+     * a refusal message and do nothing.
+     *
+     * @param player the player being trained.
+     */
     @Override
     public void interact(Player player){
         if(trained){

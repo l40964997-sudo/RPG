@@ -8,26 +8,59 @@ public class TrapDoor extends Door {
 
     private static final long serialVersionUID = 1L;
 
-    private final int trapDamage;
+    /** Damage. */
+    private final int damage;
+    /** Trap description. */
+    private final String trapDescription;
 
-    public TrapDoor(String description, Room destination, int trapDamage) {
+    /**
+     * Create a trap door without a reward.
+     *
+     * @param description     text shown when the door is inspected.
+     * @param destination     room the player enters if they survive the trap.
+     * @param damage          HP cost for using this door.
+     * @param i
+     * @param trapDescription text printed when the trap fires
+     *                        (e.g. {@code "You crash through a railing."}).
+     */
+    public TrapDoor(String description, Room destination,
+                    int damage, int i, String trapDescription) {
         super(description, destination);
-        this.trapDamage = trapDamage;
+        this.damage = damage;
+        this.trapDescription = trapDescription;
     }
 
-    public TrapDoor(String description, Room destination, int trapDamage, Item reward) {
+    /**
+     * Create a trap door that grants a one-time reward.
+     *
+     * @param description     text shown when the door is inspected.
+     * @param destination     room the player enters if they survive the trap.
+     * @param reward          item granted on first successful passage.
+     * @param damage          HP cost for using this door.
+     * @param trapDescription text printed when the trap fires.
+     */
+    public TrapDoor(String description, Room destination,
+                    Item reward, int damage, String trapDescription) {
         super(description, destination, reward);
-        this.trapDamage = trapDamage;
+        this.damage = damage;
+        this.trapDescription = trapDescription;
     }
 
+
+    /**
+     * Refuse passage if the trap would kill the player, otherwise
+     * deal the damage and pass them through.
+     *
+     * @param player the player using the door.
+     */
     @Override
     public void interact(Player player) {
-        if (player.getHealth() - trapDamage <= 0) {
+        if (player.getHealth() - damage <= 0) {
             System.out.println("Spider-sense tingles! That door would be the end of you. You back off.");
             return;
         }
-        System.out.println("It's a trap! You take " + trapDamage + " damage going through.");
-        player.takeDamage(trapDamage);
+        System.out.println("It's a trap! You take " + damage + " damage going through.");
+        player.takeDamage(damage);
         passThrough(player);
     }
 }

@@ -14,8 +14,14 @@ public class DefeatQuest extends Quest {
     private final int targetCount;
     private int defeated;
 
+
     /**
-     * Quest: defeat one specific villain.
+     * Create a quest to defeat one specific villain by name.
+     *
+     * @param name        short title shown in the quest log.
+     * @param description longer text explaining the goal.
+     * @param targetName  display name of the villain to defeat
+     *                    (case-insensitive match).
      */
     public DefeatQuest(String name, String description, String targetName) {
         super(name, description);
@@ -42,12 +48,12 @@ public class DefeatQuest extends Quest {
         if (targetName != null) {
             if (targetName.equalsIgnoreCase(villainName)) {
                 defeated = 1;
-                compete();
+                complete();
             }
         } else {
             defeated++;
             if (defeated >= targetCount) {
-                compete();
+                complete();
             }
         }
     }

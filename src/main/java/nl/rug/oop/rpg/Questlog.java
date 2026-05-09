@@ -19,11 +19,18 @@ public class Questlog implements Serializable {
 
     private final List<Quest> quests= new ArrayList<>();
 
+
     public List<Quest> getQuests(){
         return quests;
     }
 
-
+    /**
+     * Get the quests.
+     *
+     * @return the live quest list. Mutating this directly bypasses
+     *         the duplicate-name check in {@link #addQuest(Quest)},
+     *         so prefer {@code addQuest} for new entries.
+     */
     public void addQuest(Quest quest){
         for (Quest q: quests) {
             if (q.getName().equalsIgnoreCase(quest.getName())) {

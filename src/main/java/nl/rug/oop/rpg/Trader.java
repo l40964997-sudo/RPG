@@ -8,12 +8,28 @@ public class Trader extends NPC {
     private final String wantedItemName;
     private Item offeredItem;
 
+    /**
+     * Construct a new Trader.
+     *
+     * @param description    text shown when the trader is inspected.
+     * @param wantedItemName name of the item the trader wants in
+     *                       exchange (case-insensitive match).
+     * @param offeredItem    item handed over once the trade is made.
+     */
     public Trader(String description, String wantedItemName, Item offeredItem){
         super(description);
         this.wantedItemName=wantedItemName;
         this.offeredItem=offeredItem;
     }
 
+
+    /**
+     * Try to perform the trade. If the player has the wanted
+     * item, consume it and grant the offered item; otherwise
+     * print that nothing was exchanged.
+     *
+     * @param player the player initiating the trade.
+     */
     @Override
     public void interact(Player player){
         if(offeredItem==null){
@@ -34,7 +50,6 @@ public class Trader extends NPC {
             }
         }
         System.out.println("you don't have one. They shrug.");
-
 
     }
 }

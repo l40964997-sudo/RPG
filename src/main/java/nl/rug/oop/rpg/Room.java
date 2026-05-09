@@ -19,20 +19,41 @@ public class Room implements Inspectable, Serializable {
     private final List<Door> doors;
     private final List<NPC> npcs;
 
+    /**
+     * Construct a new Room.
+     *
+     * @param description text shown when the player looks around.
+     */
     public Room(String description) {
         this.description = description;
         this.doors = new ArrayList<>();
         this.npcs = new ArrayList<>();
     }
 
+    /**
+     * Add an exit to this room.
+     *
+     * @param door the door to add.
+     */
     public void addDoor(Door door) {
         doors.add(door);
     }
 
+    /**
+     * Add an NPC (ally, trainer, villain) to this room.
+     *
+     * @param npc the NPC to add.
+     */
     public void addNpc(NPC npc) {
         npcs.add(npc);
     }
 
+    /**
+     * Remove an NPC from this room. Called by villains on their
+     * own death; can also be used if an ally leaves.
+     *
+     * @param npc the NPC to remove.
+     */
     public void removeNpc(NPC npc) {
         npcs.remove(npc);
     }

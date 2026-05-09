@@ -16,11 +16,37 @@ public class Game {
     private GameState state;
     private boolean running;
 
+    /**
+     * Construct a new Game wrapping the given initial state.
+     *
+     * @param state the starting state; must contain a player whose
+     *              {@code currentRoom} is set.
+     */
     public Game(GameState state) {
         this.state = state;
         this.scanner = new Scanner(System.in);
         this.running = true;
     }
+
+    /**
+     * Get the shared scanner of the running Game.
+     *
+     * @return the running Game's scanner; combat code reads from
+     *         this instead of constructing its own Scanner.
+     */
+    public static Scanner getScannerInstance() {
+        return instance.scanner;
+    }
+
+    /**
+     * Get the active difficulty of the running Game.
+     *
+     * @return the running Game's current difficulty.
+     */
+    public static Difficulty getDifficultyInstance() {
+        return instance.state.getDifficulty();
+    }
+
 
     public void run() {
         Player player = state.getPlayer();

@@ -8,9 +8,13 @@ public class CollectQuest extends Quest {
 
     private static final long serialVersionUID = 1L;
 
+    /** Target item name. */
     private final String targetItemName;
+    /** Target. */
     private final int targetCount;
+    /** Progress. */
     private int collected;
+
 
     public CollectQuest(String name, String description,
                         String targetItemName, int targetCount) {
@@ -20,6 +24,12 @@ public class CollectQuest extends Quest {
         this.collected = 0;
     }
 
+    /**
+     * Update progress when a matching item is picked up.
+     * Already-completed quests ignore further events.
+     *
+     * @param itemName display name of the just-collected item.
+     */
     @Override
     public void onItemCollected(String itemName) {
         if (isCompleted()) {
@@ -28,11 +38,17 @@ public class CollectQuest extends Quest {
         if (targetItemName.equalsIgnoreCase(itemName)) {
             collected++;
             if (collected >= targetCount) {
-                compete();
+                complete();
             }
         }
     }
 
+    /**
+     * Operation.
+     *
+     * @return {@code "Complete"} if done, otherwise
+     *         {@code "X / N <item>s"} (e.g. {@code "1 / 2 Web Cartridges"}).
+     */
     @Override
     public String getProgressSummary() {
         if (isCompleted()) {

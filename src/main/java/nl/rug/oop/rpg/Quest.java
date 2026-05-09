@@ -11,13 +11,26 @@ public abstract class Quest implements QuestListener,Inspectable {
     private final String description;
     private boolean completed;
 
+    /**
+     * Construct a new Quest.
+     *
+     * @param name        short title shown in the quest log.
+     * @param description longer text explaining the goal.
+     */
     public Quest(String name, String description) {
         this.name = name;
         this.description = description;
         this.completed = false;
     }
 
-    protected void compete(){
+
+    /**
+     * Mark this quest as complete and announce it to the player.
+     * Subclasses call this from their listener overrides once the
+     * quest's specific goal is reached. Safe to call more than once
+     * — only the first call announces.
+     */
+    protected void complete(){
         if(!completed){
             completed= true;
             System.out.println("Congrats! >>Quest complete: "+ name + "!");
@@ -33,6 +46,10 @@ public abstract class Quest implements QuestListener,Inspectable {
         return completed? "Complete":"In progress";
     }
 
+    /**
+     * Print the quest with a status tag, name, description, and
+     * progress summary.
+     */
     @Override
     public void inspect(){
         String tag= completed?"[DONE]":"[    ]";
