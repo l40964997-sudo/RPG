@@ -12,6 +12,8 @@ import java.util.Scanner;
  */
 public class Game {
 
+    private static Game instance;     // <-- ADD THIS LINE
+
     private final Scanner scanner;
     private GameState state;
     private boolean running;
@@ -26,6 +28,7 @@ public class Game {
         this.state = state;
         this.scanner = new Scanner(System.in);
         this.running = true;
+        instance = this;
     }
 
     /**
@@ -74,7 +77,7 @@ public class Game {
         System.out.println("What do you want to do?");
         System.out.println("(0) Look around");
         System.out.println("(1) Look for a way out");
-        System.out.println("(2) Look for company");
+        System.out.println("(2) Check who's there");
         System.out.println("(3) Change difficulty");
         System.out.println("(4) Check Inventory");
         System.out.println("(5) Check Quests");

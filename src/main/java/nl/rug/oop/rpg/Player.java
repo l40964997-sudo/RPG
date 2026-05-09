@@ -10,7 +10,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@AllArgsConstructor
 public class Player implements Attackable, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -50,7 +49,6 @@ public class Player implements Attackable, Serializable {
         this.questlog = new Questlog();
     }
 
-    public Questlog getQuestlog() { return questlog; }
     @Override
     public boolean isDead(){
         return health<=0;
@@ -84,7 +82,7 @@ public class Player implements Attackable, Serializable {
      * @param amount damage to add.
      */
     public void increaseDamage(int amount){
-        webCharges+=amount;
+        damage+=amount;
     }
 
     /**

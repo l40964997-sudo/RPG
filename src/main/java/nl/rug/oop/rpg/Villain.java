@@ -63,6 +63,19 @@ public abstract class Villain extends NPC implements Attackable, Serializable {
     protected void onTurnStart() { }
 
     /**
+     * Damage-modifier hook fired before the player's incoming
+     * damage is applied. Default returns the damage unchanged.
+     * Override to absorb damage (return {@code damage / 2}),
+     * dodge entirely (return 0), etc.
+     *
+     * @param damage the incoming damage value.
+     * @return the (possibly modified) damage that should actually
+     *         be applied to this villain.
+     */
+    protected int onPlayerAttack(int damage) {
+        return damage;
+    }
+    /**
      * The villain's offensive turn. Default implementation deals
      * {@link #getDamage()} damage to the player. Override for
      * variable attacks (bombs, multi-hits, status effects).
@@ -188,7 +201,7 @@ public abstract class Villain extends NPC implements Attackable, Serializable {
             if (player.getCurrentRoom() != null) {
                 player.getCurrentRoom().removeNpc(this);
             }
-            player.getQuestLog().notifyVillainDefeated(name);
+            player.getQuestlog().notifyVillainDefeated(name);
             if (drop != null) {
                 System.out.println(name + " left something behind.");
                 player.addItem(drop);
