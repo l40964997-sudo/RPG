@@ -1,6 +1,5 @@
 package nl.rug.oop.rpg;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.io.Serializable;
