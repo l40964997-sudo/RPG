@@ -1,5 +1,6 @@
 package nl.rug.oop.rpg;
 
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -94,7 +95,11 @@ public class Game {
         System.out.println("(10) Quit");
     }
 
-    /** Dispatch the user's top-level menu choice. */
+    /**
+     * Dispatch the user's top-level menu choice.
+     *
+     * @param choice the menu option selected by the user.
+     */
     private void handleMainChoice(int choice) {
         switch (choice) {
             case 0:
@@ -132,8 +137,14 @@ public class Game {
                 running = false;
                 System.out.println("Farewell.");
                 break;
-            default:
-                System.out.println("Unknown option.");
+            default: System.out.println("Unknown option.");
+        }
+    }
+
+    /** Handle the quicksave operation. */
+    private void handleQuickSave() {
+        if (SaveManager.quickSave(state)) {
+            System.out.println("Quicksave successful.");
         }
     }
 
@@ -295,12 +306,12 @@ public class Game {
     private int readInt() {
         try {
             return scanner.nextInt();
-        } catch (NoSuchElementException eof) {
-            running = false;
-            return -1;
-        } catch (Exception e) {
+        } catch (InputMismatchException e) {
             scanner.nextLine();
             System.out.println("Please enter a number.");
+            return -1;
+        } catch (NoSuchElementException eof) {
+            running = false;
             return -1;
         }
     }
