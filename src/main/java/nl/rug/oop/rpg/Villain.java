@@ -5,6 +5,7 @@ import lombok.Getter;
 import java.io.Serializable;
 import java.util.Scanner;
 
+
 @Getter
 public abstract class Villain extends NPC implements Attackable, Serializable {
 

@@ -5,9 +5,11 @@ package nl.rug.oop.rpg;
  */
 public class Main {
 
+    /** Utility class. Not meant to be instantiated. */
     private Main() {
         // utility class — no instances
     }
+
     /**
      * The main function.
      * 
@@ -16,7 +18,6 @@ public class Main {
     public static void main(String[] args) {
 
         Difficulty difficulty = Difficulty.CRIME_WAVE;
-
         // --- Player ---
         Player miles = new Player(
                 "Miles Morales",
@@ -25,10 +26,10 @@ public class Main {
                 /* web       */ 4,
                 /* venom     */ 3
         );
-
         // --- Locations ---
         Room apartment   = new Room("Mami's apartment in Brooklyn. Smell of pernil, suit hidden under the bed.");
-        Room rooftop     = new Room("Brooklyn rooftop at sunset, water towers casting long shadows over the East River.");
+        Room rooftop     = new Room("Brooklyn rooftop at sunset," +
+                " water towers casting long shadows over the East River.");
         Room subway      = new Room("Abandoned subway tunnel under Manhattan, water dripping from old pipes.");
         Room timesSquare = new Room("Times Square, neon billboards and tourists everywhere - perfect chaos.");
         Room oscorpLobby = new Room("Oscorp Tower lobby, polished marble and a row of security turnstiles.");
@@ -46,14 +47,12 @@ public class Main {
         rooftop.addDoor(new NormalDoor(
                 "Web-swing across the Brooklyn Bridge to Times Square.", timesSquare));
 
-
         subway.addDoor(new TrapDoor(
                 "Climb a precarious maintenance shaft up to Oscorp Lobby.",
                 oscorpLobby,
                 new RioMoralesSandwich(20),
                 /* damage */ 6,
                 "The shaft gives way halfway up — you slam into a girder."));
-
 
         timesSquare.addDoor(new NormalDoor(
                 "Take the rooftops to Oscorp Tower's lobby.", oscorpLobby,
