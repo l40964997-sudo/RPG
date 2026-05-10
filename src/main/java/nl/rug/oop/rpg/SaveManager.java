@@ -12,25 +12,39 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * Stateless file IO service for save/load. Owns no game state; every
- * method is given everything it needs as a parameter. Manages the
- * savedgames/ directory, validates filenames, and (de)serializes
- * GameState objects.
+ * Stateless file IO service for save/load. Owns no game state;
+ * every method is given everything it needs as a parameter.
+ * Manages the {@value #SAVE_DIR} directory, validates filenames,
+ * and (de)serializes {@link GameState} objects.
+ * <p>
+ * All methods print human-readable error messages on failure
+ * (using {@link System#err} for IO errors) and never throw —
+ * the calling code can simply check the boolean/null return
+ * value and move on.
  */
 public final class SaveManager {
 
+    /** Directory where save files are stored. */
     public static final String SAVE_DIR = "savedgames";
+    /** Reserved filename used by the QuickSave feature. */
     public static final String QUICKSAVE_FILE = "quicksave.ser";
+    /** Required extension for save files. */
     public static final String EXTENSION = ".ser";
 
     /** Letters, digits, dash, underscore. 1 to 32 characters. */
     private static final Pattern VALID_NAME = Pattern.compile("[A-Za-z0-9_-]{1,32}");
 
+    /**
+     * Private constructor to prevent instantiation.
+     * This is a utility class and should only be accessed statically.
+     */
     private SaveManager() {
     }
 
     /**
-     * Make sure savedgames/ exists. Called before any IO.
+     * Make sure {@value #SAVE_DIR} exists. Called before any IO.
+     *
+     * @return a {@link File} pointing at the save directory.
      */
     private static File ensureDirectory() {
         File dir = new File(SAVE_DIR);
@@ -41,8 +55,10 @@ public final class SaveManager {
     }
 
     /**
-     * @param name user-supplied save name without extension
-     * @return true if it is safe to use as a filename
+     * Validate a user-supplied save name.
+     *
+     * @param name candidate name without extension.
+     * @return {@code true} if the name is acceptable.
      */
     public static boolean isValidName(String name) {
         return name != null && VALID_NAME.matcher(name).matches();
@@ -94,16 +110,30 @@ public final class SaveManager {
         }
     }
 
+    /**
+     * Save to the canonical quicksave file.
+     *
+     * @param state the snapshot to save.
+     * @return {@code true} on success.
+     */
     public static boolean quickSave(GameState state) {
         return save(state, QUICKSAVE_FILE);
     }
 
+    /**
+     * Load from the canonical quicksave file.
+     *
+     * @return the loaded state, or {@code null} on failure.
+     */
     public static GameState quickLoad() {
         return load(QUICKSAVE_FILE);
     }
 
     /**
-     * @return sorted list of .ser files in savedgames/, or an empty list
+     * List all save files (with extension) in alphabetical order.
+     *
+     * @return sorted list of {@value #EXTENSION} files in
+     *         {@value #SAVE_DIR}, or an empty list if there are none.
      */
     public static List<String> listSaves() {
         File dir = ensureDirectory();
