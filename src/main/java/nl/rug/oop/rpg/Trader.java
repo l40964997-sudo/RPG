@@ -2,10 +2,20 @@ package nl.rug.oop.rpg;
 
 import java.util.List;
 
+/**
+ * An NPC who exchanges one item for another. Looks for an item
+ * by name in the player's inventory; if found, removes it and
+ * grants the offered item in return.
+ * <p>
+ * Each trader has only a single offered item. Once the trade is
+ * completed, the trader has nothing more to offer and subsequent
+ * interactions print a refusal.
+ */
 public class Trader extends NPC {
     private static final long serialVersionUID=1L;
-
+    /** Name of the item the trader wants in exchange. */
     private final String wantedItemName;
+    /** Item handed over once the trade is made; nulled after. */
     private Item offeredItem;
 
     /**
@@ -21,7 +31,6 @@ public class Trader extends NPC {
         this.wantedItemName=wantedItemName;
         this.offeredItem=offeredItem;
     }
-
 
     /**
      * Try to perform the trade. If the player has the wanted
@@ -50,6 +59,5 @@ public class Trader extends NPC {
             }
         }
         System.out.println("you don't have one. They shrug.");
-
     }
 }

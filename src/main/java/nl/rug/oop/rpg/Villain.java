@@ -5,7 +5,34 @@ import lombok.Getter;
 import java.io.Serializable;
 import java.util.Scanner;
 
-
+/**
+ * Base class for all named villains in the game. Provides the
+ * shared turn-based combat loop in {@link #interact(Player)} and
+ * exposes three protected hooks that subclasses override to add
+ * unique combat behavior:
+ * <ul>
+ *   <li>{@link #performAttack(Player)}      — the villain's turn.
+ *       Default: a plain attack for {@link #getDamage()} damage.</li>
+ *   <li>{@link #onPlayerAttack(Player, int)} — called <em>after</em>
+ *       the player damages this villain. Default: no-op.</li>
+ *   <li>{@link #onTurnStart()}              — called at the start
+ *       of every round. Default: no-op.</li>
+ * </ul>
+ * Stats (health and damage) are scaled by the current
+ * {@link Difficulty} once at construction. Once a villain is in
+ * the world, changing difficulty does not retroactively rescale
+ * their stats — only newly spawned villains see the new values.
+ * <p>
+ * On death the villain notifies the player's {@link Questlog} so
+ * any defeat-based quests can update their progress, and grants
+ * an optional drop item.
+ * <p>
+ * {@code Villain} is abstract because instantiating a generic
+ * villain with no flavor would never be useful — the game's
+ * villains are all named characters. Concrete subclasses include
+ * {@link GreenGoblin}, {@link DoctorOctopus}, {@link Venom},
+ * {@link Mysterio}, and {@link Sandman}.
+ */
 @Getter
 public abstract class Villain extends NPC implements Attackable, Serializable {
 
@@ -50,17 +77,19 @@ public abstract class Villain extends NPC implements Attackable, Serializable {
 
     @Override
     public void takeDamage(int amount){
-        if(amount<0) amount=0;
+        if(amount<0) {
+            amount=0;
+        }
         health-=amount;
-        if(health<0) health=0;
+        if(health<0) {
+            health=0;
+        }
     }
 
     protected void heal(int amount){
         health+=amount;
         if(health>maxHealth) health=maxHealth;
     }
-
-
 
     /**
      * Reaction hook fired immediately after the player damages

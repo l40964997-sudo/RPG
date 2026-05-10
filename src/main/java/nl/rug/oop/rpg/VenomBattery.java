@@ -21,7 +21,6 @@ public class VenomBattery extends Item {
         this.charges = charges;
     }
 
-
     /**
      * Add {@code charges} venom charges to the player. Venom
      * charges have no upper cap.
