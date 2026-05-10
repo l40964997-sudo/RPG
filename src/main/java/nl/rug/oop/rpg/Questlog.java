@@ -85,6 +85,7 @@ public class Questlog implements Serializable {
             q.onItemCollected(itemName);
         }
     }
+
     /**
      * Check whether the quest log is empty.
      *
