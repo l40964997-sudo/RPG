@@ -18,7 +18,6 @@ public class Sandman extends Villain {
                 80, 7, difficulty, drop);
     }
 
-
     @Override
     public int onPlayerAttack(int damage) {
         System.out.println(getName() + "'s sand body absorbs half of the physical impact.");

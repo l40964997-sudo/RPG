@@ -13,8 +13,6 @@ public abstract class NPC implements Inspectable, Interactable,Serializable{
 
     private final String description;
 
-
-
     @Override
     public void inspect() {
         System.out.println(description);

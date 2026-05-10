@@ -49,9 +49,11 @@ public class Main {
 
         subway.addDoor(new TrapDoor(
                 "Climb a precarious maintenance shaft up to Oscorp Lobby.",
-                oscorpLobby,20,
+                oscorpLobby,
+                new RioMoralesSandwich(20),
                 /* damage */ 6,
-                "The shaft gives way halfway up - you slam into a girder."));
+                "The shaft gives way halfway up — you slam into a girder."));
+
 
         timesSquare.addDoor(new NormalDoor(
                 "Take the rooftops to Oscorp Tower's lobby.", oscorpLobby,

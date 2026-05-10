@@ -15,7 +15,14 @@ public class CollectQuest extends Quest {
     /** Progress. */
     private int collected;
 
-
+    /**
+     * Construct a new collection quest.
+     *
+     * @param name           short title shown in the quest log.
+     * @param description    longer text explaining the goal.
+     * @param targetItemName item display name to count (case-insensitive).
+     * @param targetCount    number of items to collect.
+     */
     public CollectQuest(String name, String description,
                         String targetItemName, int targetCount) {
         super(name, description);

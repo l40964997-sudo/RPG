@@ -10,6 +10,7 @@ public class LockedDoor extends Door {
 
     private static final long serialVersionUID = 1L;
 
+    /** Display name of the item that opens this door. */
     private final String requiredItemName;
 
     /**

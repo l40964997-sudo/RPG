@@ -1,9 +1,15 @@
 package nl.rug.oop.rpg;
 
+/**
+ * A permanent suit modification — reinforced gauntlets, refined
+ * web formula, etc. Permanently increases the player's base
+ * damage on use. Unlike most items, the effect is not reversible.
+ */
 public class SuitUpgrade extends Item{
 
     private static final long serialVersionUID = 1L;
 
+    /** Permanent damage added on use. */
     private final int damageBonus;
 
     /**

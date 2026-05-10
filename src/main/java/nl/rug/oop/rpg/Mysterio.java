@@ -1,7 +1,5 @@
 package nl.rug.oop.rpg;
 
-
-
 /**
  * Mysterio: Uses illusions to occasionally dodge attacks.
  */
@@ -10,7 +8,6 @@ public class Mysterio extends Villain {
 
     /**
      * Construct a new Mysterio.
-     *
      * @param difficulty current game difficulty; scales the villain's stats.
      * @param drop       optional item awarded to the player on defeat.
      */
@@ -22,7 +19,6 @@ public class Mysterio extends Villain {
 
     /**
      * 33% chance the hit lands on a hologram and is wasted.
-     *
      * @param damage incoming damage.
      * @return 0 if dodged, otherwise the damage unchanged.
      */

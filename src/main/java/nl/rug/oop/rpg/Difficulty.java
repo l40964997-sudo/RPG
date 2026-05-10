@@ -15,10 +15,12 @@ public enum Difficulty {
     CRIME_WAVE("Crime Wave",1.0,1.0),
     ULTIMATE("untimate",1.5,0.75);
 
+    /** Human-readable label shown in menus. */
     private final String label;
+    /** Multiplier applied to villain HP and damage at construction. */
     private final double villainMultiplier;
+    /** Multiplier applied to the player's outgoing damage in combat. */
     private final double playerMultiplier;
-
 
     /**
      * Operation.
@@ -32,7 +34,4 @@ public enum Difficulty {
         this.villainMultiplier = villainMultiplier;
         this.playerMultiplier = playerMultiplier;
     }
-
-
-
 }

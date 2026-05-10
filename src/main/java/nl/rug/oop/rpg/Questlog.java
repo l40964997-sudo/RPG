@@ -48,12 +48,21 @@ public class Questlog implements Serializable {
             }
         }
 
+    /**
+     * Notify every active quest that the player has picked up an item.
+     * Called by {@link Player#addItem(Item)}.
+     *
+     * @param itemName display name of the picked-up item.
+     */
         public void notifyItemCollected(String itemName){
             for(Quest q:quests){
                 q.onItemCollected(itemName);
             }
         }
 
+    /**
+     * @return {@code true} if the log contains no quests.
+     */
         public boolean isEmpty(){
             return quests.isEmpty();
         }

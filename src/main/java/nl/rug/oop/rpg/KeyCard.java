@@ -17,7 +17,6 @@ public class KeyCard extends Item {
         super(name, description);
     }
 
-
     /**
      * No-op effect. Prints a hint and puts the keycard back into
      * the player's inventory (since the framework already removed
@@ -28,7 +27,8 @@ public class KeyCard extends Item {
     @Override
     public void use(Player player) {
         // KeyCards are usually passive, but we provide a message if used directly
-        System.out.println("This is a " + getName() + ". It should be used to unlock specific doors, not used directly.");
+        System.out.println("This is a " + getName()
+                + ". It should be used to unlock specific doors, not used directly.");
         player.getInventory().add(this);
     }
 } 

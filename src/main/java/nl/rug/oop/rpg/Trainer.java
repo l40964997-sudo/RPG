@@ -1,14 +1,29 @@
 package nl.rug.oop.rpg;
 
+/**
+ * An NPC who permanently improves the player's stats. Distinct
+ * from {@link FriendlyNPC} because the effect is mechanical, not
+ * just a delivered item — stats change directly and the result
+ * persists regardless of inventory state.
+ * <p>
+ * Each trainer can only train the player once. Subsequent
+ * interactions print a polite refusal.
+ */
 public class Trainer extends NPC{
 
     private static final long serialVersionUID= 1L;
 
+    /** Line spoken when training begins. */
     private final String dialogue;
+    /** HP restored after training (capped at max HP). */
     private final int healBonus;
+    /** Permanent damage increase. */
     private final int damageBonus;
+    /** Web charges added after training. */
     private final int webBonus;
+    /** Venom charges added after training. */
     private final int venomBonus;
+    /** True once the player has been trained by this trainer. */
     private boolean trained;
 
     /**

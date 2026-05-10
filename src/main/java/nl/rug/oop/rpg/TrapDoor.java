@@ -19,12 +19,11 @@ public class TrapDoor extends Door {
      * @param description     text shown when the door is inspected.
      * @param destination     room the player enters if they survive the trap.
      * @param damage          HP cost for using this door.
-     * @param i
      * @param trapDescription text printed when the trap fires
      *                        (e.g. {@code "You crash through a railing."}).
      */
     public TrapDoor(String description, Room destination,
-                    int damage, int i, String trapDescription) {
+                    int damage, String trapDescription) {
         super(description, destination);
         this.damage = damage;
         this.trapDescription = trapDescription;

@@ -10,12 +10,28 @@ public abstract class Villain extends NPC implements Attackable, Serializable {
 
     private static final long serialVersionUID=1L;
 
+    /** Name. */
     private final String name;
+    /** Health. */
     private int health;
+    /** Max health. */
     private final int maxHealth;
+    /** Damage. */
     private final int damage;
+    /** Drop. */
     private final Item drop;
 
+    /**
+     * Construct a new Villain.
+     *
+     * @param name        short display name (e.g. {@code "Goblin"}).
+     * @param description longer text shown when inspecting this villain.
+     * @param baseHealth  pre-difficulty HP value.
+     * @param baseDamage  pre-difficulty per-attack damage.
+     * @param difficulty  current game difficulty; scales the stats above.
+     * @param drop        optional item awarded to the player on defeat;
+     *                    may be {@code null}.
+     */
     public Villain(String name, String description, int baseHealth, int baseDamage,
                    Difficulty difficulty, Item drop) {
         super(description);

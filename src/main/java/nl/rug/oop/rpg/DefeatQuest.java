@@ -10,10 +10,14 @@ public class DefeatQuest extends Quest {
 
     private static final long serialVersionUID = 1L;
 
+    /** Specific target name, or {@code null} for count-based mode. */
     private final String targetName;
-    private final int targetCount;
-    private int defeated;
 
+    /** Total kills required to complete the quest. */
+    private final int targetCount;
+
+    /** Current progress toward the target. */
+    private int defeated;
 
     /**
      * Create a quest to defeat one specific villain by name.
@@ -31,7 +35,11 @@ public class DefeatQuest extends Quest {
     }
 
     /**
-     * Quest: defeat any N villains.
+     * Create a quest to defeat any N villains, regardless of which.
+     *
+     * @param name        short title shown in the quest log.
+     * @param description longer text explaining the goal.
+     * @param targetCount number of villains to defeat (any type).
      */
     public DefeatQuest(String name, String description, int targetCount) {
         super(name, description);
@@ -40,6 +48,13 @@ public class DefeatQuest extends Quest {
         this.defeated = 0;
     }
 
+    /**
+     * Update progress when a villain is defeated. Specific quests
+     * only count their named target; count-based quests count any
+     * kill. Already-completed quests ignore further events.
+     *
+     * @param villainName name of the just-defeated villain.
+     */
     @Override
     public void onVillainDefeated(String villainName) {
         if (isCompleted()) {
@@ -58,6 +73,12 @@ public class DefeatQuest extends Quest {
         }
     }
 
+    /**
+     * Gets a short text summary of the current quest progress.
+     *
+     * @return {@code "Complete"} if done, otherwise either the
+     * specific target's name or {@code "X/N defeated"}.
+     */
     @Override
     public String getProgressSummary() {
         if (isCompleted()) {

@@ -12,10 +12,13 @@ import java.util.Scanner;
  */
 public class Game {
 
+    /** The running Game instance, set by the constructor. */
     private static Game instance;     // <-- ADD THIS LINE
-
+    /** Shared input scanner; re-used by combat code. */
     private final Scanner scanner;
+    /** Current persistable game state (player + difficulty). */
     private GameState state;
+    /** Main loop continues while this is true. */
     private boolean running;
 
     /**
@@ -50,7 +53,9 @@ public class Game {
         return instance.state.getDifficulty();
     }
 
-
+    /**
+     * Run the main menu loop until the player dies or quits.
+     */
     public void run() {
         Player player = state.getPlayer();
         System.out.println("Welcome, " + player.getName() + "!");
@@ -65,6 +70,7 @@ public class Game {
         }
     }
 
+    /** Print the top-level menu. */
     private void printMainMenu() {
         Player player = state.getPlayer();
         System.out.println();
@@ -88,6 +94,7 @@ public class Game {
         System.out.println("(10) Quit");
     }
 
+    /** Dispatch the user's top-level menu choice. */
     private void handleMainChoice(int choice) {
         switch (choice) {
             case 0:
@@ -110,8 +117,7 @@ public class Game {
                 break;
             case 6:
                 if (SaveManager.quickSave(state)) {
-                    System.out.println("Quicksave successful.");
-                }
+                    System.out.println("Quicksave successful.");}
                 break;
             case 7:
                 applyLoaded(SaveManager.quickLoad(), "Quickload");
@@ -131,6 +137,7 @@ public class Game {
         }
     }
 
+    /** Show available doors and let the player choose one. */
     private void handleDoors() {
         List<Door> doors = state.getPlayer().getCurrentRoom().getDoors();
         if (doors.isEmpty()) {
@@ -154,6 +161,7 @@ public class Game {
         doors.get(choice).interact(state.getPlayer());
     }
 
+    /** Show NPCs in the current room and let the player interact. */
     private void handleNpcs() {
         List<NPC> npcs = state.getPlayer().getCurrentRoom().getNpcs();
         if (npcs.isEmpty()) {
@@ -177,6 +185,7 @@ public class Game {
         npcs.get(choice).interact(state.getPlayer());
     }
 
+    /** Prompt for a new difficulty and apply it. */
     private void changeDifficulty() {
         Difficulty[] all = Difficulty.values();
         System.out.println("Choose difficulty:");
@@ -192,6 +201,7 @@ public class Game {
         System.out.println("Difficulty set to " + all[choice].getLabel() + ".");
     }
 
+    /** Show inventory and let the player use one item. */
     private void handleInventory() {
         List<Item> inventory = state.getPlayer().getInventory();
         if (inventory.isEmpty()) {
@@ -211,6 +221,7 @@ public class Game {
         state.getPlayer().useItem(choice);
     }
 
+    /** Print every quest, completed or not, with full description. */
     private void showQuests() {
         Questlog log = state.getPlayer().getQuestlog();
         if (log.isEmpty()) {
@@ -223,6 +234,7 @@ public class Game {
         }
     }
 
+    /** Prompt for a filename and save under that name. */
     private void handleNamedSave() {
         System.out.println("Filename? (no extension)");
         String name = readWord();
@@ -235,6 +247,7 @@ public class Game {
         }
     }
 
+    /** Show the list of save files and load the chosen one. */
     private void handleNamedLoad() {
         List<String> saves = SaveManager.listSaves();
         if (saves.isEmpty()) {
@@ -256,6 +269,14 @@ public class Game {
         applyLoaded(SaveManager.load(saves.get(choice)), "Load");
     }
 
+    /**
+     * Replace the running state with a loaded snapshot. After a
+     * successful load, recalculates the completed-quest baseline
+     * so we don't accidentally re-announce already-completed quests.
+     *
+     * @param loaded the deserialized state, or {@code null} on failure.
+     * @param label  human-readable verb ("Load" or "Quickload") for the message.
+     */
     private void applyLoaded(GameState loaded, String label) {
         if (loaded != null) {
             this.state = loaded;
@@ -263,6 +284,14 @@ public class Game {
         }
     }
 
+    /**
+     * Read one integer from input, re-prompting on bad input.
+     * Reads a full line and parses it so the trailing newline is
+     * consumed cleanly — no leftover bytes for the next call.
+     *
+     * @return parsed integer, or {@code -1} if the input stream
+     *         closes (in which case the running flag is also cleared).
+     */
     private int readInt() {
         try {
             return scanner.nextInt();
@@ -276,6 +305,11 @@ public class Game {
         }
     }
 
+    /**
+     * Read one trimmed line of input.
+     *
+     * @return trimmed line, or empty string if the stream closes.
+     */
     private String readWord() {
         try {
             return scanner.next();

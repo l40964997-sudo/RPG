@@ -1,10 +1,14 @@
 package nl.rug.oop.rpg;
 
 /**
- * GreenGoblin: 每3回合造成额外伤害
+ * Green Goblin: deals bonus damage every third turn by tossing
+ * a pumpkin bomb. Otherwise rams the player with the glider for
+ * normal damage. Overrides only {@link Villain#performAttack(Player)}.
  */
 public class GreenGoblin extends Villain {
     private static final long serialVersionUID = 1L;
+
+    /** Counter used to fire the bomb attack on every third turn. */
     private int turnCount = 0;
 
     /**
@@ -14,7 +18,8 @@ public class GreenGoblin extends Villain {
      * @param drop       optional item awarded on defeat.
      */
     public GreenGoblin(Difficulty difficulty, Item drop) {
-        super("Green Goblin","Norman Osborn cackles from atop his glider, a pumpkin bomb in each hand",46,7,difficulty,drop);
+        super("Green Goblin","Norman Osborn cackles from atop his glider, a pumpkin bomb in each hand.",
+                46,7,difficulty,drop);
     }
 
     /**

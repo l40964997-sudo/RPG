@@ -18,7 +18,6 @@ public class GuardedDoor extends Door {
         super(description, destination);
     }
 
-
     /**
      * Create a guarded door that grants a reward on first passage.
      *

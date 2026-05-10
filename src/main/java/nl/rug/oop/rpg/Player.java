@@ -13,8 +13,9 @@ import java.util.List;
 public class Player implements Attackable, Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    /** Player's display name. */
     private final String name;
+    /** Current health (always &ge; 0). */
     private Room currentRoom;
 
     private int health;
