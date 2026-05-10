@@ -121,8 +121,7 @@ public class Game {
                 showQuests();
                 break;
             case 6:
-                if (SaveManager.quickSave(state)) {
-                    System.out.println("Quicksave successful.");}
+                handleQuickSave();
                 break;
             case 7:
                 applyLoaded(SaveManager.quickLoad(), "Quickload");
