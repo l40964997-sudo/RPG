@@ -58,7 +58,7 @@ Please justify your answer in at least 250 words, and support your justification
 
 ___
 
-Answer:
+Answer: Disagree.
 
 ___
 
@@ -131,6 +131,8 @@ Which design do you believe is more appropriate in the given context? Justify yo
 
 ___
 
-Answer:
+Answer: the second developer's method.
+design would defy polymorphism
+Using class hierarcht with an abst
 
 ___
