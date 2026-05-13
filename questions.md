@@ -35,8 +35,45 @@ Justify your answer in at least 250 words. Please explain the consequences, bene
 
 ___
 
-Answer: first implementation. 
+Answer: The first implementation is the better choice, because  it follows encapsulation.
+By making description private and exposing it through method, the class keep full control over how internal state is read and modified.
+Implementation 1: Encapsulation 
+consequence:
+The approach hides the internal state of the Room object and requires external classes to interact with it through a defined contract (the methods).
+benefits: 
+1 Access control. Can make a field read only by providing only a getter, or write once by guarding setter
+2 Control and Validation.Maintain complete control over what happens when a property is read or changed.
+Can add validation logic, logging, or trigger other events whenever the description is updated.
+3 can change the internal representation of the data without breaking the public API.if you later decide to store the description in a database or split it into an array of strings, you only change the inside of the getter/setter methods. The calling code remains completely untouched.
+4 debugging.
+Drawbacks:Verbosity.
+It requires writing boilerplate code, which makes the class longer.
 
+Implementation 2: Public Fields
+consequence:
+This approach exposes the internal data directly to the outside world, allowing any external class to read or write to the field directly.
+Benefits:
+Brevity. The code is extremely short and easy to read.
+Drawbacks:
+1 Loss of Control.Any class can change the description at any time, to anything (including null), without the Room class knowing it happened.
+2 if there's a need to validate the description, cannot simply change the field  to private without breaking compilation for every single external class that accesses it directly.
+
+Supporting example
+imagine that six months into development, a new business requirement is introduced: "A room's description must never be null and must automatically be formatted so the first letter is capitalized."
+If you use first implementation:(simply update setDescription method in the Room class)
+
+public void setDescription(String description) {
+if (description == null) {
+throw new IllegalArgumentException("Description cannot be null");
+}
+this.description = description.substring(0, 1).toUpperCase() + description.substring(1);
+}
+You make the change in exactly one place. The rest of your application instantly benefits from this new logic, and no other files need to be modified
+
+If you used the second implementation:
+You have a massive problem. Because hundreds of other classes might be writing myRoom.description = "some text". 
+You have to hunt down every single assignment across your entire codebase.
+you must manually add if checks and string-manipulation logic to every single place the variable is modified.
 ___
 
 # Question 2
@@ -59,6 +96,9 @@ Please justify your answer in at least 250 words, and support your justification
 ___
 
 Answer: Disagree.
+Interfaces are extremely useful because they contain no implementation.
+They exist to define a contract.
+If relying only on classes , a developer would tightly couple their code, restrict inheritance, and severely limits the flexibility of the software.
 
 ___
 
@@ -73,7 +113,7 @@ Explain the roles of this design pattern and how `FileOutputStream` and `ObjectO
 
 ___
 
-Answer:
+Answer: Decorator Design Patterngi
 
 ___
 
@@ -127,11 +167,12 @@ public class Key extends Item {
 
 He argues that this is a better design because it is more flexible and extensible. 
 
-Which design do you believe is more appropriate in the given context? Justify your answer in at most 150 words.
+__Which design do you believe is more appropriate in the given context? Justify your answer in at most 150 words.__
 
 ___
 
-Answer: the second developer's method.
+Answer: the second developer's method(class hierarchy method) is more appropriate.
+Each item type 
 design would defy polymorphism
 Using class hierarcht with an abst
 
