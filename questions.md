@@ -99,7 +99,22 @@ Answer: Disagree.
 Interfaces are extremely useful because they contain no implementation.
 They exist to define a contract.
 If relying only on classes , a developer would tightly couple their code, restrict inheritance, and severely limits the flexibility of the software.
+Advantage of interface:
+1 A contract decoupled from implementation. An interface defines what an object can do, not how. Code written against Inspectable works with any current or future class that implements it, without knowing or caring about the concrete type. This is the Dependency Inversion Principle: depend on abstractions, not on concretions.
+2 Multiple inheritance of type. Java forbids extending more than one class. But a Room can be both Inspectable and Interactable, and a Chest can be Inspectable, Interactable, and Openable. Classes alone cannot express this.
+3 Polymorphism across unrelated hierarchies. Consider a game where rooms, items, and NPCs are all inspectable but otherwise share nothing:
 
+List<Inspectable> things = new ArrayList<>();
+things.add(new Room());
+things.add(new Sword());
+things.add(new Goblin());
+for (Inspectable t : things) t.inspect();
+Without the interface, this loop is impossible
+
+4 Testability and substitution. Interfaces let us swap real implementations for fakes or mocks during testing. A class hard-coded to depend on FileSaveStorage is hard to test; one that depends on a Storage interface can be tested with an in-memory implementation.
+5 Enabling design patterns. Strategy, Observer, Command, and many others rely on interfaces to plug in different behaviors at runtime.
+
+Unlike class, the interface lets us write code that works with anything fulfilling the contract, present or future.
 ___
 
 # Question 3
@@ -113,8 +128,35 @@ Explain the roles of this design pattern and how `FileOutputStream` and `ObjectO
 
 ___
 
-Answer: Decorator Design Patterngi
+Answer: 
+The Design Pattern: Decorator
+The FileOutputStream and ObjectOutputStream classes in Java implement the Decorator design pattern.
 
+Roles of the Decorator pattern
+Component
+— an abstract type defining the common interface. In java.io, this is OutputStream.
+Concrete Component
+— a basic implementation that does the actual underlying work. FileOutputStream is one: it writes raw bytes to a file.
+Decorator 
+— an abstract class that wraps a Component and forwards calls to it, while conforming to the Component interface itself. In java.io, this is FilterOutputStream.
+Concrete Decorator 
+— extends the decorator to add new behavior on top of the wrapped Component. ObjectOutputStream is a concrete decorator that adds the ability to serialize whole Java objects (not just bytes).
+
+How FileOutputStream and ObjectOutputStream Implement It
+FileOutputStream acts as the Concrete Component. Its sole responsibility is to write raw bytes directly to a file on the file system. It does not know what an object, a string, or a boolean is; it only understands raw byte data.
+
+ObjectOutputStream acts as the Concrete Decorator. It wraps around an existing OutputStream (in this case, my FileOutputStream). It adds the complex behavior of serialization—translating high-level Java objects (like a Room or Player) into a stream of bytes.
+
+In code:
+OutputStream fileStream = new FileOutputStream("savegame.dat");
+ObjectOutputStream objectStream = new ObjectOutputStream(fileStream);
+
+When call objectStream.writeObject(myGameState), the ObjectOutputStream does the heavy lifting of translating the object into bytes, and then it hands those bytes off to the FileOutputStream to physically write them to the disk.
+
+Benefits:
+Composition over inheritance. Instead of needing classes like ObjectFileOutputStream, CompressedObjectFileOutputStream, BufferedCompressedObjectFileOutputStream, etc. (an explosion of subclasses), you stack decorators at runtime: new ObjectOutputStream(new GZIPOutputStream(new BufferedOutputStream(new FileOutputStream(...)))).
+Open/Closed Principle. New behaviors are added as new decorators without changing existing classes.
+Flexibility. The decoration order can be tuned to the use case, and each layer has a single responsibility.
 ___
 
 # Question 4
