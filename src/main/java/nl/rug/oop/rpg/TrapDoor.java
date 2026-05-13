@@ -1,10 +1,12 @@
 package nl.rug.oop.rpg;
 
+import java.io.Serializable;
+
 /**
  * Damages the player on use. If the damage would kill, spider-sense
  * kicks in and the door refuses passage.
  */
-public class TrapDoor extends Door {
+public class TrapDoor extends Door implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

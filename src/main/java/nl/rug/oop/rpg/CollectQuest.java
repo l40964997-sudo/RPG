@@ -1,10 +1,12 @@
 package nl.rug.oop.rpg;
 
+import java.io.Serializable;
+
 /**
  * Listens for picked-up items. Completes once the player has collected
  * the required number of items whose name matches (case-insensitive).
  */
-public class CollectQuest extends Quest {
+public class CollectQuest extends Quest implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

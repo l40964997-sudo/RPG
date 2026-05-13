@@ -1,12 +1,14 @@
 package nl.rug.oop.rpg;
 
+import java.io.Serializable;
+
 /**
  * A quest that requires the player to defeat a specific number of villains.
  * <p>
  * This quest tracks the total number of defeated villains, regardless of their
  * specific names, and completes once the target count is reached.
  */
-public class Countdefeatquest extends DefeatQuest{
+public class Countdefeatquest extends DefeatQuest implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

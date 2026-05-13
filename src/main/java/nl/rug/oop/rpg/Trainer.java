@@ -1,5 +1,7 @@
 package nl.rug.oop.rpg;
 
+import java.io.Serializable;
+
 /**
  * An NPC who permanently improves the player's stats. Distinct
  * from {@link FriendlyNPC} because the effect is mechanical, not
@@ -9,7 +11,7 @@ package nl.rug.oop.rpg;
  * Each trainer can only train the player once. Subsequent
  * interactions print a polite refusal.
  */
-public class Trainer extends NPC{
+public class Trainer extends NPC implements Serializable {
 
     private static final long serialVersionUID= 1L;
 

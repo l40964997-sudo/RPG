@@ -8,8 +8,6 @@ import java.io.Serializable;
  * <em>and</em> the next turn's normal attack still hits. Light
  * hits don't trigger the counter, so players have a real choice
  * between fast small hits and slow big hits.
- * <p>
- * Overrides {@link Villain#onPlayerAttack(int)} only.
  */
 public class DoctorOctopus extends Villain implements Serializable {
 

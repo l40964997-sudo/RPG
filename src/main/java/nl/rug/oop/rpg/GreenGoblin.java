@@ -1,11 +1,13 @@
 package nl.rug.oop.rpg;
 
+import java.io.Serializable;
+
 /**
  * Green Goblin: deals bonus damage every third turn by tossing
  * a pumpkin bomb. Otherwise rams the player with the glider for
  * normal damage. Overrides only {@link Villain#performAttack(Player)}.
  */
-public class GreenGoblin extends Villain {
+public class GreenGoblin extends Villain implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /** Base health pool before difficulty scaling. */

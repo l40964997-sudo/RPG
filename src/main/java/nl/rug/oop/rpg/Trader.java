@@ -2,6 +2,8 @@ package nl.rug.oop.rpg;
 
 import lombok.Getter;
 
+import java.io.Serializable;
+
 /**
  * An NPC who exchanges one item for another. Looks for an item
  * by name in the player's inventory; if found, removes it and
@@ -12,7 +14,7 @@ import lombok.Getter;
  * interactions print a refusal.
  */
 @Getter
-public class Trader extends NPC {
+public class Trader extends NPC implements Serializable {
     private static final long serialVersionUID=1L;
     /** Name of the item the trader wants in exchange. */
     private final String wantedItemName;

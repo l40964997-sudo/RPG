@@ -1,9 +1,11 @@
 package nl.rug.oop.rpg;
 
+import java.io.Serializable;
+
 /**
  * Venom: Regenerates health at the start of each turn.
  */
-public class Venom extends Villain {
+public class Venom extends Villain implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

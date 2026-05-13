@@ -2,6 +2,8 @@ package nl.rug.oop.rpg;
 
 import lombok.Getter;
 
+import java.io.Serializable;
+
 /**
  * Base class for all quests in the game. Every quest has an
  * immutable name and description plus a mutable completion flag.
@@ -22,7 +24,7 @@ import lombok.Getter;
  * to return a short, informative status string.
  */
 @Getter
-public abstract class Quest implements QuestListener,Inspectable {
+public abstract class Quest implements QuestListener,Inspectable, Serializable {
 
     private static final long serialVersionUID= 1L;
 
