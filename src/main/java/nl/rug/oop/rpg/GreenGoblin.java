@@ -8,6 +8,15 @@ package nl.rug.oop.rpg;
 public class GreenGoblin extends Villain {
     private static final long serialVersionUID = 1L;
 
+    /** Base health pool before difficulty scaling. */
+    private static final int BASE_HEALTH = 46;
+    /** Base per-turn damage before difficulty scaling. */
+    private static final int BASE_DAMAGE = 7;
+    /** Extra damage applied when a bomb attack fires. */
+    private static final int BOMB_DAMAGE_BONUS = 6;
+    /** Every Nth turn triggers a bomb attack. */
+    private static final int BOMB_FREQUENCY = 3;
+
     /** Counter used to fire the bomb attack on every third turn. */
     private int turnCount = 0;
 
@@ -19,12 +28,12 @@ public class GreenGoblin extends Villain {
      */
     public GreenGoblin(Difficulty difficulty, Item drop) {
         super("Green Goblin","Norman Osborn cackles from atop his glider, a pumpkin bomb in each hand.",
-                46,7,difficulty,drop);
+                BASE_HEALTH,BASE_DAMAGE,difficulty,drop);
     }
 
     /**
-     * Most turns: ordinary attack. Every third turn: bomb for
-     * +6 extra damage.
+     * Most turns: ordinary attack. Every {@value #BOMB_FREQUENCY}th turn: bomb for
+     * +{@value #BOMB_DAMAGE_BONUS} extra damage.
      *
      * @param player the player taking the hit.
      */
@@ -33,11 +42,11 @@ public class GreenGoblin extends Villain {
         turnCount++;
         int finalDamage = this.getDamage();
 
-        if (turnCount % 3 == 0) {
-            finalDamage += 6;
-            System.out.println(getName() + " Throw a pumpkin bomb！Extra Damage！");
+        if (turnCount % BOMB_FREQUENCY == 0) {
+            finalDamage += BOMB_DAMAGE_BONUS;
+            System.out.println(getName() + " Throw a pumpkin bomb！");
         }
-
+        System.out.println(getName() + " hits you for " + finalDamage + " damage.");
         player.takeDamage(finalDamage);
     }
 }

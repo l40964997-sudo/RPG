@@ -1,5 +1,7 @@
 package nl.rug.oop.rpg;
 
+import java.io.Serializable;
+
 /**
  * A non-hostile NPC: an ally Miles can talk to. May give the
  * player an item, assign a quest, or both. Each gift and each
@@ -13,7 +15,7 @@ package nl.rug.oop.rpg;
  * the gift counts toward progress. Reversing this order is a
  * bug we caught during testing.
  */
-public class FriendlyNPC extends NPC{
+public class FriendlyNPC extends NPC implements Serializable {
     private static final long serialVersionUID=1L;
 
     /** Line of speech printed on interaction. */

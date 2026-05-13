@@ -1,9 +1,11 @@
 package nl.rug.oop.rpg;
 
+import java.io.Serializable;
+
 /**
  * Sandman: Sand-like body reduces incoming damage.
  */
-public class Sandman extends Villain {
+public class Sandman extends Villain implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -19,8 +21,8 @@ public class Sandman extends Villain {
     }
 
     @Override
-    public int onPlayerAttack(int damage) {
+    public int modifyIncomingDamage(int incoming) {
         System.out.println(getName() + "'s sand body absorbs half of the physical impact.");
-        return damage / 2;
+        return incoming / 2;
     }
 }

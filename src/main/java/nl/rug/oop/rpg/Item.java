@@ -3,6 +3,8 @@ package nl.rug.oop.rpg;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.io.Serializable;
+
 /**
  * Base class for everything Miles can carry. Each item defines its
  * own use() effect. Items must be Serializable so they survive
@@ -10,7 +12,7 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 @Getter
-public abstract class Item implements Inspectable {
+public abstract class Item implements Inspectable, Serializable  {
 
     private static final long serialVersionUID= 1L;
 
@@ -26,14 +28,4 @@ public abstract class Item implements Inspectable {
     public void inspect(){
         System.out.println(name+":" +description);
     }
-
-    /**
-     * Apply this item's effect. Called by
-     * {@link Player#useItem(int)} <em>after</em> the item has
-     * already been removed from the inventory.
-     *
-     * @param player the player using the item; never {@code null}.
-     */
-    public abstract void use(Player player);
-
 }

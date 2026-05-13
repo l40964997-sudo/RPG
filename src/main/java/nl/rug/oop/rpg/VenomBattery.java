@@ -1,9 +1,11 @@
 package nl.rug.oop.rpg;
 
+import java.io.Serializable;
+
 /**
  * VenomBattery: Increases Venom Strike charges.
  */
-public class VenomBattery extends Item {
+public class VenomBattery extends Item implements Usable, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -17,7 +19,12 @@ public class VenomBattery extends Item {
      */
     public VenomBattery(int charges) {
         super("Venom Battery",
-                "Stored bio-electric energy. +" + charges + " venom strike charges.");
+                "Stored bio-electric energy. +"
+                        + charges + " venom strike charges.");
+        if (charges <= 0) {
+            throw new IllegalArgumentException(
+                    "charges must be positive, got: " + charges);
+        }
         this.charges = charges;
     }
 
@@ -28,8 +35,9 @@ public class VenomBattery extends Item {
      * @param player the player recharging.
      */
     @Override
-    public void use(Player player) {
+    public boolean use(Player player) {
         player.addVenomCharges(charges);
         System.out.println("Venom Battery absorbed. You feel the bio-electricity surging!");
+        return true;
     }
 }

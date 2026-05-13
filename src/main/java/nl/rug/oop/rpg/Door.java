@@ -74,7 +74,7 @@ public abstract class Door implements Inspectable,Interactable, Serializable {
      */
     protected void passThrough(Player player){
         player.setCurrentRoom(destination);
-        grandReward(player);
+        grantReward(player);
     }
 
     /**
@@ -83,7 +83,7 @@ public abstract class Door implements Inspectable,Interactable, Serializable {
      *
      * @param player the player to grant the reward to.
      */
-    protected void grandReward(Player player){
+    protected void grantReward(Player player){
         if(reward!=null){
             System.out.println("Something useful catches your eye on the way.");
             player.addItem(reward);

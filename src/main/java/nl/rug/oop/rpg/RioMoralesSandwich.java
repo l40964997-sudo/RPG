@@ -1,9 +1,14 @@
 package nl.rug.oop.rpg;
 
+import java.io.Serializable;
+
 /**
- * RioMoralesSandwich: Heals the player.
+ * A consumable healing item representing a sandwich made by Miles' mother, Rio Morales.
+ * When used from the inventory, it restores a specific amount of Health Points (HP)
+ * to the player, capped at their maximum health. As a consumable, it is removed
+ * from the inventory after one use.
  */
-public class RioMoralesSandwich extends Item {
+public class RioMoralesSandwich extends Item implements Usable , Serializable {
     private static final long serialVersionUID = 1L;
 
     /** Heal amount. */
@@ -15,7 +20,13 @@ public class RioMoralesSandwich extends Item {
      * @param healAmount HP restored when the sandwich is eaten.
      */
     public RioMoralesSandwich(int healAmount) {
-        super("Rio's sandwich","Pernil with mayo and pickles, wrapped in foil. Restore "+healAmount+" HP");
+        super("Rio's sandwich","Pernil with mayo and pickles, " +
+                "wrapped in foil. Restore "+healAmount+" HP");
+        if (healAmount <= 0) {
+            throw new IllegalArgumentException(
+                    "healAmount must be positive, got: " + healAmount);
+        }
+
         this.healAmount = healAmount;
     }
 
@@ -26,8 +37,9 @@ public class RioMoralesSandwich extends Item {
      * @param player the player eating the sandwich.
      */
     @Override
-    public void use(Player player) {
+    public boolean use(Player player) {
         player.heal(healAmount);
         System.out.println("You ate the sandwich. Tastes like home! Recovered " + healAmount + " HP.");
+        return true;
     }
 }

@@ -1,6 +1,6 @@
 package nl.rug.oop.rpg;
 
-import java.util.List;
+import lombok.Getter;
 
 /**
  * An NPC who exchanges one item for another. Looks for an item
@@ -11,6 +11,7 @@ import java.util.List;
  * completed, the trader has nothing more to offer and subsequent
  * interactions print a refusal.
  */
+@Getter
 public class Trader extends NPC {
     private static final long serialVersionUID=1L;
     /** Name of the item the trader wants in exchange. */
@@ -25,11 +26,53 @@ public class Trader extends NPC {
      * @param wantedItemName name of the item the trader wants in
      *                       exchange (case-insensitive match).
      * @param offeredItem    item handed over once the trade is made.
+     * @throws IllegalArgumentException if wantedItemName is null/blank
+     *                                    or offeredItem is null.
      */
     public Trader(String description, String wantedItemName, Item offeredItem){
         super(description);
+        if (wantedItemName == null || wantedItemName.isBlank()) {
+            throw new IllegalArgumentException("wantedItemName must be non-blank");
+        }
+        if (offeredItem == null) {
+            throw new IllegalArgumentException("offeredItem must not be null");
+        }
         this.wantedItemName=wantedItemName;
         this.offeredItem=offeredItem;
+    }
+
+    /**
+     * Checks if the trader still has an item to offer.
+     *
+     * @return true if the trader still has something to offer.
+     */
+    public boolean hasOffer() {
+        return offeredItem != null;
+    }
+
+    /**
+     * Looks at the offered item without removing it from the trader.
+     *
+     * @return the offered item without consuming it, or null if none.
+     */
+    public Item peekOffered() {
+        return offeredItem;
+    }
+
+    /**
+     * Consume and return the offered item. After this call,
+     * {@link #hasOffer()} returns false.
+     *
+     * @return the item being offered by the trader.
+     * @throws IllegalStateException if there is nothing to offer.
+     */
+    public Item takeOffered() {
+        if (offeredItem == null) {
+            throw new IllegalStateException("Trader has nothing left to offer");
+        }
+        Item out = offeredItem;
+        offeredItem = null;
+        return out;
     }
 
     /**
@@ -41,23 +84,6 @@ public class Trader extends NPC {
      */
     @Override
     public void interact(Player player){
-        if(offeredItem==null){
-            System.out.println("They say: \"Nothing left to trade, spidey.\"");
-            return;
-        }
-        System.out.println("They say: \"Got a " + wantedItemName
-                + "? I'll trade you a " + offeredItem.getName() + " for it.\"");
-
-        List<Item> inv=player.getInventory();
-        for(int i=0;i<inv.size();i++){
-            if(inv.get(i).getName().equalsIgnoreCase(wantedItemName)){
-                Item given=inv.remove(i);
-                System.out.println("You hand over the "+given.getName()+".");
-                player.addItem(offeredItem);
-                offeredItem=null;
-                return;
-            }
-        }
-        System.out.println("you don't have one. They shrug.");
+        new TradeController().attempt(player, this);
     }
 }

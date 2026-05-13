@@ -1,9 +1,11 @@
 package nl.rug.oop.rpg;
 
+import java.io.Serializable;
+
 /**
  * WebCartridge: Refills web shooter charges.
  */
-public class WebCartridge extends Item {
+public class WebCartridge extends Item implements Usable, Serializable {
     private static final long serialVersionUID = 1L;
 
     /** Charges. */
@@ -17,6 +19,9 @@ public class WebCartridge extends Item {
     public WebCartridge(int charges) {
         super("Web Cartridge",
                 "A cartridge of Miles' homemade web fluid. +" + charges + " web charges.");
+        if (charges <= 0) {
+            throw new IllegalArgumentException("charges must be positive, got: " + charges);
+        }
         this.charges = charges;
     }
 
@@ -27,8 +32,9 @@ public class WebCartridge extends Item {
      * @param player the player reloading.
      */
     @Override
-    public void use(Player player) {
+    public boolean use(Player player) {
         player.addWebCharges(charges);
         System.out.println("Web shooters reloaded with " + charges + " new charges!");
+        return true;
     }
 }

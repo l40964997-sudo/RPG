@@ -68,9 +68,7 @@ public abstract class Quest implements QuestListener,Inspectable {
      *         shows complete/incomplete. Subclasses override for
      *         more detail.
      */
-    public String getProgressSummary(){
-        return completed? "Complete":"In progress";
-    }
+    public abstract String getProgressSummary();
 
     /**
      * Print the quest with a status tag, name, description, and

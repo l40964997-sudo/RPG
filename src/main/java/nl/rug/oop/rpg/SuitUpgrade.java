@@ -1,11 +1,13 @@
 package nl.rug.oop.rpg;
 
+import java.io.Serializable;
+
 /**
  * A permanent suit modification — reinforced gauntlets, refined
  * web formula, etc. Permanently increases the player's base
  * damage on use. Unlike most items, the effect is not reversible.
  */
-public class SuitUpgrade extends Item{
+public class SuitUpgrade extends Item implements Usable, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -22,6 +24,10 @@ public class SuitUpgrade extends Item{
     public SuitUpgrade(String upgradeName,int damageBonus){
         super("Suit Upgrade: " + upgradeName,
                 "Permanent suit modification. +" + damageBonus + " damage on every hit.");
+        if (damageBonus < 0) {
+            throw new IllegalArgumentException(
+                    "damageBonus must be non-negative, got: " + damageBonus);
+        }
         this.damageBonus=damageBonus;
     }
 
@@ -33,8 +39,9 @@ public class SuitUpgrade extends Item{
      * @param player the player installing the upgrade.
      */
     @Override
-    public void use(Player player){
+    public boolean use(Player player){
         player.increaseDamage(damageBonus);
         System.out.println("Nice, new suit! +(extra " + damageBonus + " damage)");
+        return true;
     }
 }

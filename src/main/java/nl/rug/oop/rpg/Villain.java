@@ -2,31 +2,35 @@ package nl.rug.oop.rpg;
 
 import lombok.Getter;
 
-import java.io.Serializable;
-import java.util.Scanner;
-
 /**
- * Base class for all named villains in the game. Provides the
- * shared turn-based combat loop in {@link #interact(Player)} and
- * exposes three protected hooks that subclasses override to add
- * unique combat behavior:
+ * Base class for all named villains. A Villain owns its own stats
+ * and exposes hooks that {@link CombatController} calls during a
+ * fight. It does <strong>not</strong> drive the combat loop —
+ * that responsibility belongs to {@link CombatController}.
+ * <p>
+ * Subclasses override these hooks to give each villain a unique
+ * combat personality:
  * <ul>
- *   <li>{@link #performAttack(Player)} — the villain's turn.
- *       Default: a plain attack for {@link #getDamage()} damage.</li>
- *   <li>{@link #onPlayerAttack(Player, int)} — called <em>after</em>
- *       the player damages this villain. Default: no-op.</li>
- *   <li>{@link #onTurnStart()} — called at the start of every
- *       round. Default: no-op.</li>
+ *   <li>{@link #performAttack(Player)} — the villain's offensive
+ *       turn. Default: a plain attack for {@link #getDamage()} damage.</li>
+ *   <li>{@link #modifyIncomingDamage(int)} — adjust incoming damage
+ *       <em>before</em> it lands (e.g. Sandman absorbs half).
+ *       Default: pass-through.</li>
+ *   <li>{@link #onPlayerAttack(Player, int)} — react <em>after</em>
+ *       the (modified) damage has been applied (e.g. Doc Ock's
+ *       counter on heavy hits). Default: no-op.</li>
+ *   <li>{@link #onTurnStart()} — passive hook fired at the start
+ *       of every round (e.g. Venom regenerates). Default: no-op.</li>
  * </ul>
  * Stats are scaled by the current {@link Difficulty} once at
  * construction; changing difficulty later does not retroactively
  * rescale already-spawned villains.
  * <p>
- * On death the villain notifies the player's {@link Questlog} so
- * defeat-based quests can update, and grants an optional drop.
+ * Villains are always hostile and may be killed, so they override
+ * {@link NPC#isHostile()} and {@link NPC#isAlive()}.
  */
 @Getter
-public abstract class Villain extends NPC implements Attackable, Serializable {
+public abstract class Villain extends NPC implements Attackable {
 
     private static final long serialVersionUID = 1L;
 
@@ -40,6 +44,8 @@ public abstract class Villain extends NPC implements Attackable, Serializable {
     private final int damage;
     /** Optional item awarded on defeat; {@code null} means no drop. */
     private final Item drop;
+    /** Difficulty captured at spawn time; available to subclasses for scaled effects. */
+    private final Difficulty difficulty;
 
     /**
      * Construct a new Villain.
@@ -59,10 +65,23 @@ public abstract class Villain extends NPC implements Attackable, Serializable {
         this.health = this.maxHealth;
         this.damage = (int) Math.round(baseDamage * difficulty.getVillainMultiplier());
         this.drop = drop;
+        this.difficulty = difficulty;
+    }
+
+    /** Villains are always hostile. */
+    @Override
+    public boolean isHostile() {
+        return true;
+    }
+
+    /** Villains are alive until their HP hits zero. */
+    @Override
+    public boolean isAlive() {
+        return !isDead();
     }
 
     /**
-     * {@inheritDoc}
+     * Checks if the villain is dead.
      *
      * @return {@code true} once {@link #health} is zero or below.
      */
@@ -72,10 +91,9 @@ public abstract class Villain extends NPC implements Attackable, Serializable {
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
-     * Negative inputs are clamped to zero, and {@link #health} is
-     * floored at zero so display values never go negative.
+     * Apply damage to this villain. Negative inputs are clamped
+     * to zero, and {@link #health} is floored at zero so display
+     * values never go negative.
      *
      * @param amount raw incoming damage; values below zero count as zero.
      */
@@ -91,11 +109,14 @@ public abstract class Villain extends NPC implements Attackable, Serializable {
     }
 
     /**
-     * Restore HP, clamped to {@link #maxHealth}.
+     * Restore HP, clamped to {@link #maxHealth}. Negatives are ignored.
      *
-     * @param amount HP to restore; negative values reduce health.
+     * @param amount HP to restore.
      */
     protected void heal(int amount) {
+        if (amount < 0) {
+            return;
+        }
         health += amount;
         if (health > maxHealth) {
             health = maxHealth;
@@ -103,32 +124,38 @@ public abstract class Villain extends NPC implements Attackable, Serializable {
     }
 
     /**
-     * Reaction hook fired immediately after the player damages
-     * this villain. Override for counter-attacks, partial
-     * absorption, miss-chances, etc. Default: no-op.
+     * Damage-modifier hook fired <em>before</em> the player's
+     * incoming damage is applied. Override for absorption, partial
+     * resistance, dodge chances, etc. Default returns the damage
+     * unchanged.
+     * <p>
+     * Called by {@link Player}'s combat actions before
+     * {@link #takeDamage(int)}.
+     *
+     * @param incoming the raw damage about to be applied.
+     * @return the (possibly modified) damage actually applied.
+     */
+    public int modifyIncomingDamage(int incoming) {
+        return incoming;
+    }
+
+    /**
+     * Reaction hook fired immediately <em>after</em> the player
+     * damages this villain. Override for counter-attacks, taunts,
+     * etc. Default: no-op.
      *
      * @param player the attacking player.
-     * @param dealt  the amount of damage that was just applied.
+     * @param dealt  the amount of damage that was actually applied
+     *               (already passed through {@link #modifyIncomingDamage(int)}).
      */
-    protected void onPlayerAttack(Player player, int dealt) { }
+    public void onPlayerAttack(Player player, int dealt) { }
 
     /**
      * Per-round passive hook fired at the start of every round
      * before the player picks an action. Override for regeneration,
      * summoning, ramping damage, etc. Default: no-op.
      */
-    protected void onTurnStart() { }
-
-    /**
-     * Damage-modifier hook fired before the player's incoming
-     * damage is applied. Default returns the damage unchanged.
-     *
-     * @param damage the incoming damage value.
-     * @return the (possibly modified) damage actually applied.
-     */
-    protected int onPlayerAttack(int damage) {
-        return damage;
-    }
+    public void onTurnStart() { }
 
     /**
      * The villain's offensive turn. Default deals {@link #getDamage()}
@@ -136,217 +163,32 @@ public abstract class Villain extends NPC implements Attackable, Serializable {
      *
      * @param player the player taking the hit.
      */
-    protected void performAttack(Player player) {
+    public void performAttack(Player player) {
         System.out.println(name + " strikes you for " + damage + " damage.");
         player.takeDamage(damage);
     }
 
-    // --- Combat loop -------------------------------------------------------
-
     /**
-     * Run the turn-based combat loop until either combatant dies
-     * or the player flees. Delegates to {@link #runCombatLoop(Player)}
-     * for the round-by-round logic and {@link #handleDefeat(Player)}
-     * for post-victory cleanup.
+     * Entry point for combat. Delegates the entire fight to
+     * {@link CombatController}; the villain itself stays out of
+     * input/output and loop control.
      *
      * @param player the player engaging this villain.
      */
     @Override
     public void interact(Player player) {
-        announceFight();
-        runCombatLoop(player);
-        if (isDead()) {
-            handleDefeat(player);
-        }
-    }
-
-    /**
-     * Print the combat-start banner.
-     */
-    private void announceFight() {
-        System.out.println();
-        System.out.println("=== " + name + " stands in your way! ===");
-    }
-
-    /**
-     * Drive the round-by-round loop. Exits on death of either
-     * combatant or when the player picks "flee".
-     *
-     * @param player the player engaging this villain.
-     */
-    private void runCombatLoop(Player player) {
-        Scanner scanner = Game.getScannerInstance();
-        double playerMult = Game.getDifficultyInstance().getPlayerMultiplier();
-        while (!isDead() && !player.isDead()) {
-            onTurnStart();
-            if (isDead()) {
-                break;
-            }
-            printRoundStatus(player);
-            printMenu();
-            int choice = readInt(scanner);
-            if (choice == 5) {
-                System.out.println("You shoot a web and swing out of the fight.");
-                return;
-            }
-            boolean villainGetsTurn = handleChoice(player, scanner, choice, playerMult);
-            if (villainGetsTurn && !isDead() && !player.isDead()) {
-                performAttack(player);
-            }
-        }
-    }
-
-    /**
-     * Print the per-round HP / resource summary.
-     *
-     * @param player the player whose stats are shown.
-     */
-    private void printRoundStatus(Player player) {
-        System.out.println();
-        System.out.println("Miles HP: " + player.getHealth() + "/" + player.getMaxHealth()
-                + "  |  Web: " + player.getWebCharges()
-                + "  |  Venom: " + player.getVenomCharges());
-        System.out.println(name + " HP: " + health + "/" + maxHealth);
-    }
-
-    /**
-     * Print the action menu.
-     */
-    private void printMenu() {
-        System.out.println("What do you do?");
-        System.out.println("  (0) Punch");
-        System.out.println("  (1) Web Shot       [1 web]");
-        System.out.println("  (2) Venom Strike   [1 venom]");
-        System.out.println("  (3) Camouflage     [1 venom]");
-        System.out.println("  (4) Use an item");
-        System.out.println("  (5) Swing away (flee)");
-    }
-
-    /**
-     * Dispatch the player's chosen action.
-     *
-     * @param player     the acting player.
-     * @param scanner    shared input scanner (needed by item-use).
-     * @param choice     the menu option the player selected.
-     * @param playerMult cached player damage multiplier.
-     * @return {@code true} if the villain should retaliate this round.
-     */
-    private boolean handleChoice(Player player, Scanner scanner, int choice, double playerMult) {
-        switch (choice) {
-            case 0:
-                doPunch(player, playerMult);
-                return true;
-            case 1:
-                doWebShot(player, playerMult);
-                return true;
-            case 2:
-                doVenomStrike(player, playerMult);
-                return true;
-            case 3:
-                doCamouflage(player);
-                return true;
-            case 4:
-                return doUseItem(player, scanner);
-            default:
-                System.out.println("You fumble. " + name + " doesn't.");
-                return true;
-        }
-    }
-
-    /**
-     * Plain melee attack.
-     *
-     * @param player     the attacking player.
-     * @param playerMult cached player damage multiplier.
-     */
-    private void doPunch(Player player, double playerMult) {
-        int dealt = scaleDamage(player.getDamage(), playerMult);
-        System.out.println("You land a clean punch for " + dealt + " damage.");
-        takeDamage(dealt);
-        onPlayerAttack(player, dealt);
-    }
-
-    /**
-     * Web-shot attack: costs 1 web charge, +3 base damage.
-     *
-     * @param player     the attacking player.
-     * @param playerMult cached player damage multiplier.
-     */
-    private void doWebShot(Player player, double playerMult) {
-        if (!player.spendWebCharges(1)) {
-            System.out.println("Click. Out of web fluid!");
-            return;
-        }
-        int dealt = scaleDamage(player.getDamage() + 3, playerMult);
-        System.out.println("Thwip! You web-blast " + name + " for " + dealt + " damage.");
-        takeDamage(dealt);
-        onPlayerAttack(player, dealt);
-    }
-
-    /**
-     * Venom strike: costs 1 venom charge, doubles base damage.
-     *
-     * @param player     the attacking player.
-     * @param playerMult cached player damage multiplier.
-     */
-    private void doVenomStrike(Player player, double playerMult) {
-        if (!player.spendVenomCharges(1)) {
-            System.out.println("You can't muster a venom blast right now.");
-            return;
-        }
-        int dealt = scaleDamage(player.getDamage() * 2, playerMult);
-        System.out.println("ZZZZAP! Venom strike hits for " + dealt + " damage.");
-        takeDamage(dealt);
-        onPlayerAttack(player, dealt);
-    }
-
-    /**
-     * Camouflage: costs 1 venom charge, makes the next incoming
-     * attack miss.
-     *
-     * @param player the player going invisible.
-     */
-    private void doCamouflage(Player player) {
-        if (!player.spendVenomCharges(1)) {
-            System.out.println("Not enough venom energy to vanish.");
-            return;
-        }
-        System.out.println("You go invisible. The next attack will miss.");
-        player.setCamouflaged(true);
-    }
-
-    /**
-     * Inventory sub-menu. Lets the player pick an item to use mid-combat
-     * or back out without spending a turn.
-     *
-     * @param player  the player whose inventory is consulted.
-     * @param scanner shared input scanner.
-     * @return {@code true} if a turn was spent (item used or empty bag),
-     *         {@code false} if the player cancelled.
-     */
-    private boolean doUseItem(Player player, Scanner scanner) {
-        if (player.getInventory().isEmpty()) {
-            System.out.println("You've got nothing on you. " + name + " grins.");
-            return true;
-        }
-        showInventory(player);
-        System.out.println("Use which? (-1 to cancel)");
-        int idx = readInt(scanner);
-        if (idx >= 0 && idx < player.getInventory().size()) {
-            player.useItem(idx);
-            return true;
-        }
-        System.out.println("You hesitate.");
-        return false;
+        new CombatController(player, this).run();
     }
 
     /**
      * Post-victory cleanup: remove this villain from its room,
-     * notify the quest log, and award the drop if any.
+     * notify the quest log, and award the drop if any. Called by
+     * {@link CombatController} once the fight ends in the
+     * player's favor.
      *
      * @param player the victorious player.
      */
-    private void handleDefeat(Player player) {
+    public void handleDefeat(Player player) {
         System.out.println();
         System.out.println("You took down " + name + "!");
         if (player.getCurrentRoom() != null) {
@@ -356,53 +198,6 @@ public abstract class Villain extends NPC implements Attackable, Serializable {
         if (drop != null) {
             System.out.println(name + " left something behind.");
             player.addItem(drop);
-        }
-    }
-
-    // --- Helpers -----------------------------------------------------------
-
-    /**
-     * Apply the player damage multiplier and clamp to a minimum of 1,
-     * so on Ultimate the player still scratches the boss.
-     *
-     * @param base raw damage before multiplier.
-     * @param mult player damage multiplier from current difficulty.
-     * @return scaled damage value, never below 1.
-     */
-    private int scaleDamage(int base, double mult) {
-        int dealt = (int) Math.round(base * mult);
-        return dealt < 1 ? 1 : dealt;
-    }
-
-    /**
-     * Print the player's inventory as a numbered list during combat.
-     *
-     * @param player the player whose inventory is being shown.
-     */
-    private void showInventory(Player player) {
-        System.out.println("Your stuff:");
-        for (int i = 0; i < player.getInventory().size(); i++) {
-            System.out.println("  (" + i + ") " + player.getInventory().get(i).getName());
-        }
-    }
-
-    /**
-     * Read an integer from the shared scanner, re-prompting on
-     * non-numeric input. Treats EOF as a flee command so combat
-     * exits cleanly when stdin closes.
-     *
-     * @param scanner the shared input scanner.
-     * @return the parsed integer, or {@code 5} (flee) if stdin closed.
-     */
-    private int readInt(Scanner scanner) {
-        while (true) {
-            try {
-                return Integer.parseInt(scanner.nextLine().trim());
-            } catch (NumberFormatException e) {
-                System.out.println("Please enter a number.");
-            } catch (java.util.NoSuchElementException e) {
-                return 5;
-            }
         }
     }
 }

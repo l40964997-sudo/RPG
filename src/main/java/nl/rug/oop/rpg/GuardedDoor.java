@@ -1,10 +1,12 @@
 package nl.rug.oop.rpg;
 
+import java.io.Serializable;
+
 /**
  * Refuses passage while any villain in the player's current room is
  * still standing.
  */
-public class GuardedDoor extends Door {
+public class GuardedDoor extends Door implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

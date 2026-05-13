@@ -1,9 +1,11 @@
 package nl.rug.oop.rpg;
 
+import java.io.Serializable;
+
 /**
  * Plain door. Always lets the player through.
  */
-public class NormalDoor extends Door {
+public class NormalDoor extends Door implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

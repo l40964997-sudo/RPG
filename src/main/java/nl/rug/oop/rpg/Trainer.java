@@ -69,7 +69,7 @@ public class Trainer extends NPC{
             System.out.println("  +" + healBonus + " HP restored");
         }
         if(webBonus>0){
-            player.heal(healBonus);
+            player.heal(webBonus);
             System.out.println("  +" + webBonus + " web charges");
         }
         if(venomBonus>0){

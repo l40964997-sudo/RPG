@@ -1,6 +1,7 @@
 package nl.rug.oop.rpg;
 
-import java.util.InputMismatchException;
+import lombok.Getter;
+
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -13,11 +14,11 @@ import java.util.Scanner;
  */
 public class Game {
 
-    /** The running Game instance, set by the constructor. */
-    private static Game instance;     // <-- ADD THIS LINE
     /** Shared input scanner; re-used by combat code. */
     private final Scanner scanner;
-    /** Current persistable game state (player + difficulty). */
+
+    /** Current persistable game state (player + difficulty).*/
+    @Getter
     private GameState state;
     /** Main loop continues while this is true. */
     private boolean running;
@@ -32,26 +33,15 @@ public class Game {
         this.state = state;
         this.scanner = new Scanner(System.in);
         this.running = true;
-        instance = this;
     }
 
     /**
-     * Get the shared scanner of the running Game.
+     * Retrieves the active difficulty level of the current game state.
      *
-     * @return the running Game's scanner; combat code reads from
-     *         this instead of constructing its own Scanner.
+     * @return the active difficulty.
      */
-    public static Scanner getScannerInstance() {
-        return instance.scanner;
-    }
-
-    /**
-     * Get the active difficulty of the running Game.
-     *
-     * @return the running Game's current difficulty.
-     */
-    public static Difficulty getDifficultyInstance() {
-        return instance.state.getDifficulty();
+    public Difficulty getDifficulty() {
+        return state.getDifficulty();
     }
 
     /**
@@ -207,7 +197,7 @@ public class Game {
             System.out.println("Invalid difficulty.");
             return;
         }
-        state = new GameState(state.getPlayer(), all[choice]);
+        state = new GameState(state.getPlayer(), all[choice], state.getWorld());
         System.out.println("Difficulty set to " + all[choice].getLabel() + ".");
     }
 
@@ -290,6 +280,7 @@ public class Game {
     private void applyLoaded(GameState loaded, String label) {
         if (loaded != null) {
             this.state = loaded;
+            this.state = loaded;
             System.out.println(label + " successful.");
         }
     }
@@ -305,7 +296,7 @@ public class Game {
     private int readInt() {
         try {
             return scanner.nextInt();
-        } catch (InputMismatchException e) {
+        } catch (NumberFormatException e) {
             scanner.nextLine();
             System.out.println("Please enter a number.");
             return -1;

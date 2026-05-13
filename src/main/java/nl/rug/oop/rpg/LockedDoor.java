@@ -1,43 +1,60 @@
 package nl.rug.oop.rpg;
 
-import java.util.List;
+import java.io.Serializable;
 
 /**
  * Locked. Requires a specific item by name in the player's inventory;
  * the item is consumed when the door is used.
  */
-public class LockedDoor extends Door {
+public class LockedDoor extends Door implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /** Display name of the item that opens this door. */
-    private final String requiredItemName;
+    /** The keycard that opens this door. Compared by name on use. */
+    private final KeyCard requiredKey;
 
     /**
      * Create a locked door with no reward.
      *
-     * @param description      text shown when the door is inspected.
-     * @param destination      room behind the door.
-     * @param requiredItemName name of the item the player must hold;
-     *                         match is case-insensitive.
+     * @param description text shown when the door is inspected.
+     * @param destination room behind the door.
+     * @param requiredKey the {@link KeyCard} that opens this door;
+     *                    must not be {@code null}.
+     * @throws IllegalArgumentException if {@code requiredKey} is null.
      */
-    public LockedDoor(String description, Room destination, String requiredItemName) {
+    public LockedDoor(String description, Room destination, KeyCard requiredKey) {
         super(description, destination);
-        this.requiredItemName = requiredItemName;
+        if (requiredKey == null) {
+            throw new IllegalArgumentException("requiredKey must not be null");
+        }
+        this.requiredKey = requiredKey;
     }
 
     /**
-     * Create a locked door that grants a reward on first passage.
+     * Constructs a locked door that grants a reward upon first passage.
      *
-     * @param description      text shown when the door is inspected.
-     * @param destination      room behind the door.
-     * @param reward           item granted on first successful passage.
-     * @param requiredItemName name of the item the player must hold.
+     * @param description text shown when the door is inspected.
+     * @param destination the room this door leads to.
+     * @param requiredKey the {@link KeyCard} needed to unlock this door; must not be null.
+     * @param reward      the item granted to the player upon successful entry.
+     * @throws IllegalArgumentException if {@code requiredKey} is null.
      */
     public LockedDoor(String description, Room destination,
-                      String requiredItemName, Item reward) {
+                      KeyCard requiredKey, Item reward) {
         super(description, destination, reward);
-        this.requiredItemName = requiredItemName;
+        if (requiredKey == null ) {
+            throw new IllegalArgumentException("requiredItemName must be non-blank");
+        }
+        this.requiredKey = requiredKey;
+    }
+
+    /**
+     * Get the keycard required to open this door.
+     *
+     * @return the required {@link KeyCard}.
+     */
+    public KeyCard getRequiredKey() {
+        return requiredKey;
     }
 
     /**
@@ -49,15 +66,12 @@ public class LockedDoor extends Door {
      */
     @Override
     public void interact(Player player) {
-        List<Item> inventory = player.getInventory();
-        for (int i = 0; i < inventory.size(); i++) {
-            if (inventory.get(i).getName().equalsIgnoreCase(requiredItemName)) {
-                Item used = inventory.remove(i);
-                System.out.println("You use the " + used.getName() + ". The door clicks open.");
-                passThrough(player);
-                return;
-            }
+        Item used = player.takeItemByName(requiredKey.getName());
+        if (used == null) {
+            System.out.println("Locked. You'd need a " + requiredKey.getName() + " to get through.");
+            return;
         }
-        System.out.println("Locked. You'd need a " + requiredItemName + " to get through.");
+        System.out.println(".You use the \" + used.getName() + \". The door clicks open");
+        passThrough(player);
     }
 }

@@ -154,9 +154,9 @@ ObjectOutputStream objectStream = new ObjectOutputStream(fileStream);
 When call objectStream.writeObject(myGameState), the ObjectOutputStream does the heavy lifting of translating the object into bytes, and then it hands those bytes off to the FileOutputStream to physically write them to the disk.
 
 Benefits:
-Composition over inheritance. Instead of needing classes like ObjectFileOutputStream, CompressedObjectFileOutputStream, BufferedCompressedObjectFileOutputStream, etc. (an explosion of subclasses), you stack decorators at runtime: new ObjectOutputStream(new GZIPOutputStream(new BufferedOutputStream(new FileOutputStream(...)))).
-Open/Closed Principle. New behaviors are added as new decorators without changing existing classes.
-Flexibility. The decoration order can be tuned to the use case, and each layer has a single responsibility.
+1 Composition over inheritance. Instead of needing classes like ObjectFileOutputStream, CompressedObjectFileOutputStream, BufferedCompressedObjectFileOutputStream, etc. (an explosion of subclasses), you stack decorators at runtime: new ObjectOutputStream(new GZIPOutputStream(new BufferedOutputStream(new FileOutputStream(...)))).
+2 Open/Closed Principle. New behaviors are added as new decorators without changing existing classes.
+3 Flexibility. The decoration order can be tuned to the use case, and each layer has a single responsibility.
 ___
 
 # Question 4
@@ -195,9 +195,9 @@ public class Room implements Serializable {
 }
 Whenever I create a class that implements Serializable, 
 add a serialVersionUID immediately.
+
 Doing so ensures saved data remains resilient as game evolves.
 ___
-
 
 
 # Question 5
@@ -250,5 +250,6 @@ Furthermore, the game logic would require massive, error-prone if/else or switch
 The second approach correctly leverages polymorphism and the Open/Closed Principle.
 Encapsulation: Each subclass strictly contains only its relevant data and behavior.
 Extensibility: To add a Shield later, you simply create a new subclass without altering existing, tested code.
-This design guarantees a robust, type-safe, and highly maintainable architecture
+This design guarantees a robust, type-safe, and highly maintainable architecture.
+
 ___

@@ -48,8 +48,16 @@ public final class SaveManager {
      */
     private static File ensureDirectory() {
         File dir = new File(SAVE_DIR);
+        if (dir.exists()) {
+            if (!dir.isDirectory()) {
+                System.err.println("Save path exists but is not a directory: " + SAVE_DIR);
+                return null;
+            }
+            return dir;
+        }
         if (!dir.exists() && !dir.mkdir()) {
             System.err.println("Could not create save directory: " + SAVE_DIR);
+            return null;
         }
         return dir;
     }
@@ -73,6 +81,9 @@ public final class SaveManager {
      */
     public static boolean save(GameState state, String filename) {
         File dir = ensureDirectory();
+        if (dir == null) {
+            return false;
+        }
         File target = new File(dir, filename);
         try (FileOutputStream fos = new FileOutputStream(target);
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
@@ -91,7 +102,11 @@ public final class SaveManager {
      * @return the loaded state, or null on failure
      */
     public static GameState load(String filename) {
-        File target = new File(SAVE_DIR, filename);
+        File dir = ensureDirectory();
+        if (dir == null) {
+            return null;
+        }
+        File target = new File(dir, filename);
         if (!target.exists()) {
             System.err.println("Save file does not exist: " + filename);
             return null;
@@ -137,6 +152,9 @@ public final class SaveManager {
      */
     public static List<String> listSaves() {
         File dir = ensureDirectory();
+        if (dir == null) {
+            return Collections.emptyList();
+        }
         File[] files = dir.listFiles((d, name) -> name.endsWith(EXTENSION));
         if (files == null || files.length == 0) {
             return Collections.emptyList();

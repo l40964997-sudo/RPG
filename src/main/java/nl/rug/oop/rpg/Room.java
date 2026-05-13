@@ -4,10 +4,21 @@ import lombok.Getter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
- * A location in NYC.
+ * Represents a distinct location or zone within the game world (NYC).
+ * <p>
+ * This class acts as a central node in the game's map. It manages the state
+ * of a single area by containing the environmental description, a dynamic list
+ * of available exits ({@link Door}s), and a list of characters currently
+ * present ({@link NPC}s).
+ * <p>
+ * Beyond just holding data, the Room actively manages its contents. It provides
+ * methods to dynamically update the area (such as removing defeated enemies) and
+ * can evaluate its own state, like checking if all hostile entities have been
+ * defeated ({@link #villainCleared()}) to allow passage through guarded doors.
  */
 @Getter
 public class Room implements Inspectable, Serializable {
@@ -29,6 +40,27 @@ public class Room implements Inspectable, Serializable {
         this.description = description;
         this.doors = new ArrayList<>();
         this.npcs = new ArrayList<>();
+    }
+
+    /**
+     * Get an unmodifiable view of the doors in this room.
+     * Mutations must go through {@link #addDoor(Door)}.
+     *
+     * @return read-only list of doors.
+     */
+    public List<Door> getDoors() {
+        return Collections.unmodifiableList(doors);
+    }
+
+    /**
+     * Get an unmodifiable view of the NPCs in this room.
+     * Mutations must go through {@link #addNpc(NPC)} or
+     * {@link #removeNpc(NPC)}.
+     *
+     * @return read-only list of NPCs.
+     */
+    public List<NPC> getNpcs() {
+        return Collections.unmodifiableList(npcs);
     }
 
     /**

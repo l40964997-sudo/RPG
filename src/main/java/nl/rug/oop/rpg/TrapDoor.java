@@ -8,9 +8,9 @@ public class TrapDoor extends Door {
 
     private static final long serialVersionUID = 1L;
 
-    /** Damage. */
+    /** The amount of health points deducted from the player when they trigger the trap. */
     private final int damage;
-    /** Trap description. */
+    /** The narrative text displayed to the player when the trap is activated.*/
     private final String trapDescription;
 
     /**

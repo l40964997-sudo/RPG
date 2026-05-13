@@ -26,6 +26,13 @@ public class CollectQuest extends Quest {
     public CollectQuest(String name, String description,
                         String targetItemName, int targetCount) {
         super(name, description);
+        if (targetItemName == null || targetItemName.isBlank()) {
+            throw new IllegalArgumentException("targetItemName must be non-blank");
+        }
+        if (targetCount <= 0) {
+            throw new IllegalArgumentException(
+                    "targetCount must be positive, got: " + targetCount);
+        }
         this.targetItemName = targetItemName;
         this.targetCount = targetCount;
         this.collected = 0;
