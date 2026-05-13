@@ -1,5 +1,17 @@
 package nl.rug.oop.rpg;
 
+import nl.rug.oop.rpg.entity.FriendlyNPC;
+import nl.rug.oop.rpg.entity.Player;
+import nl.rug.oop.rpg.entity.Trader;
+import nl.rug.oop.rpg.entity.Trainer;
+import nl.rug.oop.rpg.entity.villain.*;
+import nl.rug.oop.rpg.item.*;
+import nl.rug.oop.rpg.quest.CollectQuest;
+import nl.rug.oop.rpg.quest.Countdefeatquest;
+import nl.rug.oop.rpg.quest.Quest;
+import nl.rug.oop.rpg.quest.SpecificDefeatQuest;
+import nl.rug.oop.rpg.world.*;
+
 /**
  * Application entry point. Composes the game world via
  * {@link WorldBuilder} and hands it to {@link Game}.

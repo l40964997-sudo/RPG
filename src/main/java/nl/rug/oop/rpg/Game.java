@@ -1,6 +1,12 @@
 package nl.rug.oop.rpg;
 
 import lombok.Getter;
+import nl.rug.oop.rpg.entity.NPC;
+import nl.rug.oop.rpg.entity.Player;
+import nl.rug.oop.rpg.item.Item;
+import nl.rug.oop.rpg.quest.Quest;
+import nl.rug.oop.rpg.quest.Questlog;
+import nl.rug.oop.rpg.world.Door;
 
 import java.util.List;
 import java.util.NoSuchElementException;

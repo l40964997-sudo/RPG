@@ -1,6 +1,8 @@
 package nl.rug.oop.rpg;
 
 import lombok.Getter;
+import nl.rug.oop.rpg.entity.Player;
+import nl.rug.oop.rpg.world.World;
 
 import java.io.Serializable;
 
