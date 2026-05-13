@@ -128,9 +128,35 @@ Answer in at least 150 words and explain with an example if you can.
 
 ___
 
-Answer:
+Answer:The crash is caused by a mismatch in a hidden identifier that Java uses behind the scenes.
+When serialize an object using ObjectOutputStream, Java automatically calculates a unique identifier for that class called the serialVersionUID. 
+If we do not explicitly define this ID ourselves, the JVM generates one at runtime based on the class's structural blueprint, 
+including its fields, methods, and access modifiers.
+When we added the private int difficulty, field to the Room class,  changed its structural blueprint. 
+As a result, the JVM generated a completely new serialVersionUID for the updated class.
+When use ObjectInputStream to load an old saved file, Java compares the serialVersionUID of the saved object against the ID of the current code. 
+Because we added a field, the IDs no longer match. 
+Java assumes the older saved data is dangerously incompatible with the new code and abruptly throws an InvalidClassException, crashing your program.
 
+To prevent this from happening, 
+I must take control of the versioning process by explicitly declaring a fixed serialVersionUID within the class.
+
+example:
+@Setters
+@Getters
+public class Room implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private String description;
+    private int difficulty;
+   ....//fields
+
+}
+Whenever I create a class that implements Serializable, 
+add a serialVersionUID immediately.
+Doing so ensures saved data remains resilient as game evolves.
 ___
+
+
 
 # Question 5
 
@@ -172,8 +198,15 @@ __Which design do you believe is more appropriate in the given context? Justify 
 ___
 
 Answer: the second developer's method(class hierarchy method) is more appropriate.
-Each item type 
-design would defy polymorphism
-Using class hierarcht with an abst
+The design utilizing an abstract class and inheritance.
+While the first approach seems simple initially, relying on a string type field is a well-known anti-pattern.
+To represent everything, that single Item class would eventually need fields for damage, healing, and keyType. 
+Consequently, every item would carry memory-wasting, irrelevant data (e.g., a potion does not need a damage value), 
+resulting in a bloated class. 
+Furthermore, the game logic would require massive, error-prone if/else or switch statements to handle behavior.
 
+The second approach correctly leverages polymorphism and the Open/Closed Principle.
+Encapsulation: Each subclass strictly contains only its relevant data and behavior.
+Extensibility: To add a Shield later, you simply create a new subclass without altering existing, tested code.
+This design guarantees a robust, type-safe, and highly maintainable architecture
 ___
