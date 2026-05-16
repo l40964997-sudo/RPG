@@ -28,10 +28,8 @@ public class RioMoralesSandwich extends Item implements Usable, Serializable {
             throw new IllegalArgumentException(
                     "healAmount must be positive, got: " + healAmount);
         }
-
         this.healAmount = healAmount;
     }
-
 
     /**
      * Heal the player by the configured amount (capped at max HP).
